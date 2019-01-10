@@ -1,4 +1,4 @@
-# pitches from intervals
+# passaggi algorithm 1
 # Jeff Trevino, 2019
 # minimal strategy making a passaggio based on:
 # a witness pitch
