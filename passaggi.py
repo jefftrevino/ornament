@@ -6,65 +6,52 @@
 # a diatonic context
 
 import abjad
-from abjadext import tonality
-import random
-
-scale = tonality.Scale(('c', 'major'))
-pitch_range = abjad.pitch.PitchRange('[G3, C6]')
-
-def sorted_pitch_list_from_scale_and_pitch_range(scale, pitch_range):
-    named_pitch_set = scale.create_named_pitch_set_in_pitch_range(pitch_range)
-    named_pitch_list = sorted(list(named_pitch_set))
-    return named_pitch_list
-
-named_pitch_list = sorted_pitch_list_from_scale_and_pitch_range(scale, pitch_range)
 
 ornament_dict = {
 # the ornament is represented as diatonic steps relative to the witness
 # i.e., 0 is the witness, 1 upper neighbor, -1 lower neighbor
-    'ascending mezza tirata': [0, 1, 2, 3, 4],
-    'descending mezza tirata': [0, -1, -2, -3, -2],
-
+# multiple by -1 to invert ornament
+    'mezza tirata': [0, 1, 2, 3, 4],
 }
 
-def unpitched_leaves_from_ornament(witness, ornament):
-    num_notes = len(ornament)
-    note_duration = witness.written_duration / num_notes
-    durations = [note_duration] * num_notes
-    maker = abjad.LeafMaker()
-    leaves = maker(0, durations)
-    return leaves
+class Passaggio:
+    """Model of a passaggio based on a starting pitch, diatonic context, and ornament"""
 
-def pitch_leaves_with_ornament(witness, passaggio, ornament, pitch_list):
-    # to pitch, which scale degree witnesses the ornament?
-    witness_index = pitch_list.index(witness.written_pitch)
-    # derive scale degrees from the ornament
-    pitch_indexes = [witness_index + x for x in ornament]
-    pitches = [pitch_list[x] for x in pitch_indexes]
-    # then paint on pitches from the ornament
-    leaves = abjad.select(passaggio).leaves()
-    for leaf, pitch in zip(leaves, pitches):
-        leaf.written_pitch = pitch
+    def __init__(self, witness, scale, pitch_range):
+        self.witness = witness
+        self.scale = scale
+        self.pitch_range = pitch_range
+        self.pitch_list = self.sorted_pitch_list_from_scale_and_pitch_range()
 
-def choose_ornament_from_dict(the_dict):
-    # returns a passaggio based on a starting pitch and dictionary of ornaments
-    dict_keys = list(ornament_dict.keys())
-    the_key = random.choice(dict_keys)
-    ornament = ornament_dict[the_key]
-    return ornament
+    def __call__(self, ornament):
+        return self.passaggio_from_witness(ornament)
 
-def passaggio_from_witness(witness, pitch_list):
-    # make a random choice from the dictionary
-    ornament = choose_ornament_from_dict(ornament_dict)
-    # use the chosen diminution to make new leaves from the starting pitch
-    passaggio = unpitched_leaves_from_ornament(witness, ornament)
-    pitch_leaves_with_ornament(witness, passaggio, ornament, pitch_list)
-    return passaggio
+    def sorted_pitch_list_from_scale_and_pitch_range(self):
+        named_pitch_set = self.scale.create_named_pitch_set_in_pitch_range(self.pitch_range)
+        return sorted(list(named_pitch_set))
 
-# ornament each note of a melody with a passaggio:
-staff = abjad.Staff("c''4. b'8 a'4 g' f'4. g'8 a'4 c'' b'4. a'8 g'4 f' e'1")
-out = abjad.Staff()
-for note in staff:
-    passaggio = passaggio_from_witness(note, named_pitch_list)
-    out.append(passaggio)
-abjad.show(out)
+    def unpitched_leaves_from_ornament(self, ornament):
+        num_notes = len(ornament)
+        note_duration = self.witness.written_duration / num_notes
+        durations = [note_duration] * num_notes
+        maker = abjad.LeafMaker()
+        leaves = maker(0, durations)
+        return leaves
+
+    def pitch_leaves_with_ornament(self, passaggio, ornament):
+        # to pitch, which scale degree witnesses the ornament?
+        witness_index = self.pitch_list.index(self.witness.written_pitch)
+        # derive scale degrees from the ornament
+        pitch_indexes = [witness_index + x for x in ornament]
+        pitches = [self.pitch_list[x] for x in pitch_indexes]
+        # then paint on pitches from the ornament
+        leaves = abjad.select(passaggio).leaves()
+        for leaf, pitch in zip(leaves, pitches):
+            leaf.written_pitch = pitch
+
+    def passaggio_from_witness(self, ornament):
+        # make a random choice from the dictionary
+        # use the chosen diminution to make new leaves from the starting pitch
+        passaggio = self.unpitched_leaves_from_ornament(ornament)
+        self.pitch_leaves_with_ornament(passaggio, ornament)
+        return passaggio
