@@ -1,6 +1,6 @@
 # pitches from intervals
 # Jeff Trevino, 2019
-# minimal strategy making a passaggo based on:
+# minimal strategy making a passaggio based on:
 # a witness pitch
 # an ornament dictionary
 # a diatonic context
@@ -35,36 +35,36 @@ def unpitched_leaves_from_ornament(witness, ornament):
     leaves = maker(0, durations)
     return leaves
 
-def pitch_leaves_with_ornament(witness, passaggo, ornament, pitch_list):
+def pitch_leaves_with_ornament(witness, passaggio, ornament, pitch_list):
     # to pitch, which scale degree witnesses the ornament?
     witness_index = pitch_list.index(witness.written_pitch)
     # derive scale degrees from the ornament
     pitch_indexes = [witness_index + x for x in ornament]
     pitches = [pitch_list[x] for x in pitch_indexes]
     # then paint on pitches from the ornament
-    leaves = abjad.select(passaggo).leaves()
+    leaves = abjad.select(passaggio).leaves()
     for leaf, pitch in zip(leaves, pitches):
         leaf.written_pitch = pitch
 
 def choose_ornament_from_dict(the_dict):
-    # returns a passago based on a starting pitch and dictionary of ornaments
+    # returns a passaggio based on a starting pitch and dictionary of ornaments
     dict_keys = list(ornament_dict.keys())
     the_key = random.choice(dict_keys)
     ornament = ornament_dict[the_key]
     return ornament
 
-def passaggo_from_witness(witness, pitch_list):
+def passaggio_from_witness(witness, pitch_list):
     # make a random choice from the dictionary
     ornament = choose_ornament_from_dict(ornament_dict)
     # use the chosen diminution to make new leaves from the starting pitch
-    passaggo = unpitched_leaves_from_ornament(witness, ornament)
-    pitch_leaves_with_ornament(witness, passaggo, ornament, pitch_list)
-    return passaggo
+    passaggio = unpitched_leaves_from_ornament(witness, ornament)
+    pitch_leaves_with_ornament(witness, passaggio, ornament, pitch_list)
+    return passaggio
 
-# ornament each note of a melody with a passaggo:
+# ornament each note of a melody with a passaggio:
 staff = abjad.Staff("c''4. b'8 a'4 g' f'4. g'8 a'4 c'' b'4. a'8 g'4 f' e'1")
 out = abjad.Staff()
 for note in staff:
-    passaggo = passaggo_from_witness(note, named_pitch_list)
-    out.append(passaggo)
+    passaggio = passaggio_from_witness(note, named_pitch_list)
+    out.append(passaggio)
 abjad.show(out)
