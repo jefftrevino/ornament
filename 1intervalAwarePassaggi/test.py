@@ -8,7 +8,7 @@ from interval_aware_passaggi import Passaggio
 from abjadext import tonality
 from interval_aware_ornaments import ornament_dictionary
 
-scale = tonality.Scale(('c', 'major'))
+scale = tonality.Scale(('a', 'minor'))
 pitch_range = abjad.pitch.PitchRange('[E3, C6]')
 
 score = abjad.Score()
@@ -16,14 +16,15 @@ score = abjad.Score()
 def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
     out = abjad.Staff()
-    for x, note in enumerate(staff[:-1]):
-        if x < len(staff):
+    for x, note in enumerate(staff):
+        if x < len(staff) - 1:
+            print(note)
             present_witness = note
             future_witness = staff[x + 1]
             passaggio = Passaggio(ornament_dictionary, scale, pitch_range)
             replacement_leaves = passaggio((present_witness, future_witness))
         else:
-            replacement_leaves = abjad.mutate(self.present).copy()
+            replacement_leaves = abjad.mutate(present_witness).copy()
         out.append(replacement_leaves)
     return out
 
