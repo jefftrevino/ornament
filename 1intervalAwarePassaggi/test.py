@@ -17,7 +17,7 @@ def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
     out = abjad.Staff()
     for x, note in enumerate(staff[:-1]):
-        if x < len(staff) - 1:
+        if x < len(staff):
             present_witness = note
             future_witness = staff[x + 1]
             passaggio = Passaggio(ornament_dictionary, scale, pitch_range)
@@ -35,4 +35,4 @@ abjad.attach(abjad.Clef('bass'), copy[0])
 output = ornament_melody(staff)
 score.append(output)
 score.append(copy)
-abjad.play(score)
+abjad.show(score)

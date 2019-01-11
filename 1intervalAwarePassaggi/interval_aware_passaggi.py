@@ -10,10 +10,10 @@ import random
 
 class Passaggio:
     """Model of a passaggio based on a starting pitch, diatonic context, and ornament"""
-    # witnesses: tuple of two abjad.Note
-    # scale: abjadext.tonality.Scale
-    # pitch_range abjad.pitch.PitchRange
     def __init__(self, ornament_dictionary, scale, pitch_range):
+        # witnesses: tuple of two abjad.Note
+        # scale: abjadext.tonality.Scale
+        # pitch_range abjad.pitch.PitchRange
         self.ornament_dictionary = ornament_dictionary
         self.scale = scale
         self.pitch_range = pitch_range
@@ -35,18 +35,14 @@ class Passaggio:
         return leaves
 
     def pitch_leaves_with_ornament(self, passaggio, ornament):
-        # to pitch, which scale degree witnesses the ornament?
         witness_index = self.pitch_list.index(self.present.written_pitch)
-        # derive scale degrees from the ornament
         pitch_indexes = [witness_index + x for x in ornament]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
-        # then paint on pitches from the ornament
         leaves = abjad.select(passaggio).leaves()
         for leaf, pitch in zip(leaves, pitches):
             leaf.written_pitch = pitch
 
     def choose_ornament_from_dictionary(self, interval_dictionary):
-        # returns a passaggio based on a starting pitch and dictionary of ornaments
         dict_keys = list(interval_dictionary.keys())
         the_key = random.choice(dict_keys)
         ornament = interval_dictionary[the_key]
@@ -57,29 +53,37 @@ class Passaggio:
             direction = random.choice([-1, 1])
         return [note * direction for note in ornament]
 
-
-    def passaggio_from_ornament(self, witnesses):
+    def get_interval_from_witnesses(self, witnesses):
         self.present = witnesses[0]
         self.future = witnesses[1]
-        # get the interval between present and future witnesses
         interval = abjad.NamedInterval.from_pitch_carriers(
             self.present.written_pitch,
             self.future.written_pitch
             )
-        # get the interval-specific ornament_dictionary
+        return interval
+
+    def look_up_ornament(self, interval):
         interval_dictionary = self.ornament_dictionary[interval.name[-1:]]
-        # make a random choice from the dictionary
         ornament_name, ornament = self.choose_ornament_from_dictionary(interval_dictionary)
-        # invert the ornament if descending
         ornament = self.invert_ornament(
             ornament,
             interval.direction_number
             )
-        # use the chosen ornament to make new leaves from the starting pitch
+        return ornament_name, ornament
+
+    def create_ornament_leaves(self, ornament):
         passaggio = self.unpitched_leaves_from_ornament(ornament)
-        # label ornaments by name
+        self.pitch_leaves_with_ornament(passaggio, ornament)
+        return passaggio
+
+    def label_ornament(self, passaggio, ornament_name):
         markup = abjad.Markup(ornament_name, direction=abjad.Up)
         first_leaf = abjad.inspect(passaggio).leaf(0)
         abjad.attach(markup, first_leaf)
-        self.pitch_leaves_with_ornament(passaggio, ornament)
+
+    def passaggio_from_ornament(self, witnesses):
+        interval = self.get_interval_from_witnesses(witnesses)
+        ornament_name, ornament = self.look_up_ornament(interval)
+        passaggio = self.create_ornament_leaves(ornament)
+        self.label_ornament(passaggio, ornament_name)
         return passaggio
