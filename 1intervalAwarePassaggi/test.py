@@ -4,30 +4,31 @@
 
 import random
 import abjad
-from passaggi import Passaggio
+from interval_aware_passaggi import Passaggio
 from abjadext import tonality
-from ornaments import ornament_dict
+from interval_aware_ornaments import ornament_dictionary
 
 scale = tonality.Scale(('c', 'major'))
-pitch_range = abjad.pitch.PitchRange('[G3, C6]')
+pitch_range = abjad.pitch.PitchRange('[E3, C6]')
 
-def choose_ornament_from_dict(the_dict):
-    # returns a passaggio based on a starting pitch and dictionary of ornaments
-    dict_keys = list(ornament_dict.keys())
-    the_key = random.choice(dict_keys)
-    ornament = ornament_dict[the_key]
-    return ornament
+score = abjad.Score()
 
 def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
     out = abjad.Staff()
-    for note in staff:
-        ornament = choose_ornament_from_dict(ornament_dict)
-        passaggio = Passaggio(note, scale, pitch_range)
-        replacement_leaves = passaggio(ornament)
+    for x, note in enumerate(staff[:-1]):
+        if x < len(staff) - 1:
+            present_witness = note
+            future_witness = staff[x + 1]
+            passaggio = Passaggio(ornament_dictionary, scale, pitch_range)
+            replacement_leaves = passaggio((present_witness, future_witness))
+        else:
+            replacement_leaves = abjad.mutate(self.present).copy()
         out.append(replacement_leaves)
     return out
 
-staff = abjad.Staff("c''4. b'8 a'4 g' f'4. g'8 a'4 c'' b'4. a'8 g'4 f' e'1")
+staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
+score.append(abjad.mutate(staff).copy())
 output = ornament_melody(staff)
-abjad.show(output)
+score.append(output)
+abjad.show(score)
