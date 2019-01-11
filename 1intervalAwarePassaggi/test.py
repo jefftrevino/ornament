@@ -28,7 +28,11 @@ def ornament_melody(melody):
     return out
 
 staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
-score.append(abjad.mutate(staff).copy())
+copy = abjad.mutate(staff).copy()
+for leaf in copy:
+    abjad.mutate(leaf).transpose(-12)
+abjad.attach(abjad.Clef('bass'), copy[0])
 output = ornament_melody(staff)
 score.append(output)
-abjad.show(score)
+score.append(copy)
+abjad.play(score)

@@ -50,7 +50,7 @@ class Passaggio:
         dict_keys = list(interval_dictionary.keys())
         the_key = random.choice(dict_keys)
         ornament = interval_dictionary[the_key]
-        return ornament
+        return (the_key, ornament)
 
     def invert_ornament(self, ornament, direction):
         if not direction:
@@ -69,10 +69,17 @@ class Passaggio:
         # get the interval-specific ornament_dictionary
         interval_dictionary = self.ornament_dictionary[interval.name[-1:]]
         # make a random choice from the dictionary
-        ornament = self.choose_ornament_from_dictionary(interval_dictionary)
+        ornament_name, ornament = self.choose_ornament_from_dictionary(interval_dictionary)
         # invert the ornament if descending
-        ornament = self.invert_ornament(ornament, interval.direction_number)
+        ornament = self.invert_ornament(
+            ornament,
+            interval.direction_number
+            )
         # use the chosen ornament to make new leaves from the starting pitch
         passaggio = self.unpitched_leaves_from_ornament(ornament)
+        # label ornaments by name
+        markup = abjad.Markup(ornament_name, direction=abjad.Up)
+        first_leaf = abjad.inspect(passaggio).leaf(0)
+        abjad.attach(markup, first_leaf)
         self.pitch_leaves_with_ornament(passaggio, ornament)
         return passaggio
