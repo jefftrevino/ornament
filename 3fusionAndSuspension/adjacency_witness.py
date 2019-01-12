@@ -21,7 +21,6 @@ class AdjacencyWitness:
             self.future_moment.start_leaves[1]
         )
     def __repr__(self):
-        x = 5
         return "AdjacencyWitness(\n\t" + \
             "from: " + str(self.from_harmonic_interval.name[1:]) + "\n\t" + \
             "to: " + str(self.to_harmonic_interval.name[1:]) + "\n\t" + \

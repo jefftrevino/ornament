@@ -42,5 +42,7 @@ class SuspensionWitness:
 
     def color_suspension_candidate(self):
         if self.is_suspension_candidate():
-            for leaf in suspension_leaves:
+            for x, leaf in enumerate(self.suspension_leaves):
                 abjad.override(leaf).note_head.color = 'red'
+                markup = abjad.Markup(str(x+1), direction = abjad.Up)
+                abjad.attach(markup, leaf)

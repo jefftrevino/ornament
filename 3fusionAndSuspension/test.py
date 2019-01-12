@@ -16,6 +16,7 @@ for first, second, third in zip(vertical_moments, vertical_moments[1:], vertical
     second_adjacency = AdjacencyWitness(second, third)
     suspension_witness = SuspensionWitness(first_adjacency, second_adjacency)
     if suspension_witness.is_suspension_candidate():
+        suspension_witness.color_suspension_candidate()
         print(suspension_witness.suspension_leaves)
 
 
