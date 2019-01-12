@@ -1,4 +1,4 @@
-# passaggi algorithm 1
+# interval-aware passaggi algorithm
 # Jeff Trevino, 2019
 # minimal strategy making a passaggio based on:
 # a witness pitch
