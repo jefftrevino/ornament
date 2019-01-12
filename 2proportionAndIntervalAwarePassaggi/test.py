@@ -16,19 +16,21 @@ score = abjad.Score()
 def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
     out = abjad.Staff()
-    for x, note in enumerate(staff):
-        if x < len(staff) - 1:
-            print(note)
-            present_witness = note
-            future_witness = staff[x + 1]
+    ties = list(abjad.iterate(staff).logical_ties(pitched=True))
+    for x, tie in enumerate(ties):
+        if x < len(ties) - 1:
+            print(tie)
+            present_witness = tie
+            future_witness = ties[x + 1]
             passaggio = Passaggio(ornament_dictionary, scale, pitch_range)
             replacement_leaves = passaggio((present_witness, future_witness))
         else:
-            replacement_leaves = abjad.mutate(present_witness).copy()
+            replacement_leaves = abjad.mutate(ties[-1]).copy()
         out.append(replacement_leaves)
     return out
 
-staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
+# staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
+staff = abjad.Staff("c'1 ~ c'2 f'2 ~ f'4 d'2.")
 copy = abjad.mutate(staff).copy()
 for leaf in copy:
     abjad.mutate(leaf).transpose(-12)

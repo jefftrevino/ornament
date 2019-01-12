@@ -11,7 +11,7 @@ import random
 class Passaggio:
     """Model of a passaggio based on a starting pitch, diatonic context, and ornament"""
     def __init__(self, ornament_dictionary, scale, pitch_range):
-        # witnesses: tuple of two abjad.Note, abjad.Chord, or abjad.LogicalTie
+        # witnesses: tuple of two abjad.LogicalTie
         # scale: abjadext.tonality.Scale
         # pitch_range abjad.pitch.PitchRange
         self.ornament_dictionary = ornament_dictionary
@@ -29,6 +29,7 @@ class Passaggio:
     def unpitched_leaves_from_ornament(self, ornament):
         ratio = ornament[0]
         duration = self.present.written_duration
+        print(duration)
         tuplet = abjad.Tuplet().from_duration_and_ratio(duration, ratio)
         tuplet.trivialize()
         if tuplet.trivial():
@@ -37,7 +38,7 @@ class Passaggio:
 
     def pitch_leaves_with_ornament(self, passaggio, ornament):
         pitch_list = ornament[1]
-        witness_index = self.pitch_list.index(self.present.written_pitch)
+        witness_index = self.pitch_list.index(self.present[0].written_pitch)
         pitch_indexes = [witness_index + x for x in pitch_list]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
         leaves = abjad.select(passaggio).leaves()
@@ -59,8 +60,8 @@ class Passaggio:
         self.present = witnesses[0]
         self.future = witnesses[1]
         interval = abjad.NamedInterval.from_pitch_carriers(
-            self.present.written_pitch,
-            self.future.written_pitch
+            self.present[0].written_pitch,
+            self.future[0].written_pitch
             )
         return interval
 
