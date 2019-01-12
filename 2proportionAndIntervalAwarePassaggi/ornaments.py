@@ -6,7 +6,8 @@ ornament_dictionary = {
 # multiple by -1 to invert ornament
     '1': {
         'bombus': ([1] * 4, [0,0,0,0]),
-        'circulo': ([1] * 4, [0, -1, -2, -1])
+        'circulo': ([1] * 4, [0, -1, -2, -1]),
+        'tallis suspirans': ([-2, 3, 1, 1, 1], [0,0,-1, -2, -1]),
         },
 
     '2': {

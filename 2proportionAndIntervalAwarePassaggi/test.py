@@ -30,7 +30,7 @@ def ornament_melody(melody):
     return out
 
 # staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
-staff = abjad.Staff("c'1 ~ c'2 f'2 ~ f'4 d'2.")
+staff = abjad.Staff("c'4 c' c' c'")
 copy = abjad.mutate(staff).copy()
 for leaf in copy:
     abjad.mutate(leaf).transpose(-12)

@@ -43,7 +43,8 @@ class Passaggio:
         pitches = [self.pitch_list[x] for x in pitch_indexes]
         leaves = abjad.select(passaggio).leaves()
         for leaf, pitch in zip(leaves, pitches):
-            leaf.written_pitch = pitch
+            if not isinstance(leaf, abjad.Rest):
+                leaf.written_pitch = pitch
 
     def choose_ornament_from_dictionary(self, interval_dictionary):
         dict_keys = list(interval_dictionary.keys())
