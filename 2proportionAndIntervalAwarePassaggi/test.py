@@ -4,11 +4,11 @@
 
 import random
 import abjad
-from interval_aware_passaggi import Passaggio
+from passaggi import Passaggio
 from abjadext import tonality
-from interval_aware_ornaments import ornament_dictionary
+from ornaments import ornament_dictionary
 
-scale = tonality.Scale(('a', 'minor'))
+scale = tonality.Scale(('c', 'major'))
 pitch_range = abjad.pitch.PitchRange('[E3, C6]')
 
 score = abjad.Score()

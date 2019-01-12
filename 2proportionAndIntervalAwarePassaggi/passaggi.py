@@ -1,4 +1,4 @@
-# passaggi algorithm 1
+# interval-aware proportional passaggi algorithm
 # Jeff Trevino, 2019
 # minimal strategy making a passaggio based on:
 # a witness pitch
@@ -11,7 +11,7 @@ import random
 class Passaggio:
     """Model of a passaggio based on a starting pitch, diatonic context, and ornament"""
     def __init__(self, ornament_dictionary, scale, pitch_range):
-        # witnesses: tuple of two abjad.Note
+        # witnesses: tuple of two abjad.Note, abjad.Chord, or abjad.LogicalTie
         # scale: abjadext.tonality.Scale
         # pitch_range abjad.pitch.PitchRange
         self.ornament_dictionary = ornament_dictionary
@@ -27,16 +27,18 @@ class Passaggio:
         return sorted(list(named_pitch_set))
 
     def unpitched_leaves_from_ornament(self, ornament):
-        num_notes = len(ornament)
-        note_duration = self.present.written_duration / num_notes
-        durations = [note_duration] * num_notes
-        maker = abjad.LeafMaker()
-        leaves = maker(0, durations)
-        return leaves
+        ratio = ornament[0]
+        duration = self.present.written_duration
+        tuplet = abjad.Tuplet().from_duration_and_ratio(duration, ratio)
+        tuplet.trivialize()
+        if tuplet.trivial():
+            tuplet.hide = True
+        return tuplet
 
     def pitch_leaves_with_ornament(self, passaggio, ornament):
+        pitch_list = ornament[1]
         witness_index = self.pitch_list.index(self.present.written_pitch)
-        pitch_indexes = [witness_index + x for x in ornament]
+        pitch_indexes = [witness_index + x for x in pitch_list]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
         leaves = abjad.select(passaggio).leaves()
         for leaf, pitch in zip(leaves, pitches):
@@ -51,7 +53,7 @@ class Passaggio:
     def invert_ornament(self, ornament, direction):
         if not direction:
             direction = random.choice([-1, 1])
-        return [note * direction for note in ornament]
+        return (ornament[0], [note * direction for note in ornament[1]])
 
     def get_interval_from_witnesses(self, witnesses):
         self.present = witnesses[0]
