@@ -1,12 +1,17 @@
 import abjad
 from abjadext import tonality
+from ornament.suspension.suspension import Suspension
 
 class SuspensionWitness:
 
-    def __init__(self, first_adjacency, second_adjacency, index_pair):
+    def __init__(self):
+        self.possible_suspensions = {}
+
+    def __call__(self, first_adjacency, second_adjacency, index_pair):
         self.first_adjacency = first_adjacency
         self.second_adjacency = second_adjacency
         self.staff_index = index_pair[0]
+
     def is_all_sixths(self):
         if '6' == \
         self.first_adjacency.from_harmonic_interval.name[-1] == \
@@ -61,7 +66,6 @@ class SuspensionWitness:
             self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[self.staff_index])
             self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[self.staff_index])
             self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[self.staff_index])
-            print(True)
             return True
         else:
             return False
@@ -71,9 +75,17 @@ class SuspensionWitness:
             markup = abjad.Markup(str(x+1), direction = abjad.Up)
             abjad.attach(markup, leaf)
 
+    def add_possible_suspension(self, suspension):
+        start_offset = suspension.offsets[0]
+        if start_offset in self.possible_suspensions:
+            self.possible_suspensions[start_offset].append(suspension)
+        else:
+            self.possible_suspensions[start_offset] = [suspension]
+
     def is_suspension_candidate(self):
         if self.is_seven_six_suspension_candidate() or \
         self.is_four_three_suspension_candidate():
+            self.add_possible_suspension(Suspension(abjad.Selection(self.suspension_leaves)))
             return True
         else:
             return False
