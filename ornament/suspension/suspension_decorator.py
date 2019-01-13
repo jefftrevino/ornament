@@ -16,22 +16,16 @@ class SuspensionDecorator:
         for moment in vertical_moments:
             print(moment.start_leaves)
         for first, second, third in zip(vertical_moments, vertical_moments[1:], vertical_moments[2:]):
-            self.identify_suspension_leaves_in_voice_pairs(first_adjacency, second_adjacency)
+            self.identify_suspension_leaves_in_voice_pairs((first, second, third))
 
-    def identify_suspension_leaves_in_voice_pair(self, first_adjacency, second_adjacency):
-        first_adjacency = AdjacencyWitness(first, second)
-        second_adjacency = AdjacencyWitness(second, third)
-
-
-        for first, second, third in zip(vertical_moments, vertical_moments[1:], vertical_moments[2:]):
-            first_adjacency = AdjacencyWitness(first, second)
-            second_adjacency = AdjacencyWitness(second, third)
-            suspension_witness = SuspensionWitness(first_adjacency, second_adjacency)
-            if suspension_witness.is_seven_six_suspension_candidate():
+    def identify_suspension_leaves_in_voice_pairs(self, moments):
+        for index_pair in itertools.combinations(range(len(self.input_score)), 2):
+            print(index_pair)
+            first_adjacency = AdjacencyWitness(moments[0], moments[1], index_pair)
+            second_adjacency = AdjacencyWitness(moments[1], moments[2], index_pair)
+            print(first_adjacency)
+            print(second_adjacency)
+            suspension_witness = SuspensionWitness(first_adjacency, second_adjacency, index_pair)
+            print(suspension_witness.is_suspension_candidate())
+            if suspension_witness.is_suspension_candidate():
                 suspension_witness.color_suspension_candidate()
-            if suspension_witness.is_four_three_suspension_candidate():
-                suspension_witness.color_suspension_candidate()
-
-
-    # def engrave_suspensions(self):
-    #     for voice_pair in itertools.combinations(score[:], 2):

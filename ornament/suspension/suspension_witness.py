@@ -3,10 +3,10 @@ from abjadext import tonality
 
 class SuspensionWitness:
 
-    def __init__(self, first_adjacency, second_adjacency):
+    def __init__(self, first_adjacency, second_adjacency, index_pair):
         self.first_adjacency = first_adjacency
         self.second_adjacency = second_adjacency
-
+        self.staff_index = index_pair[0]
     def is_all_sixths(self):
         if '6' == \
         self.first_adjacency.from_harmonic_interval.name[-1] == \
@@ -31,9 +31,9 @@ class SuspensionWitness:
 
     def top_voice_descends_by_step(self):
         analyzer = tonality.analyze([
-            self.first_adjacency.present_moment.start_leaves[0],
-            self.first_adjacency.future_moment.start_leaves[0]]
-            )
+            self.first_adjacency.present_moment.start_leaves[self.staff_index],
+            self.first_adjacency.future_moment.start_leaves[self.staff_index],
+            ])
         return analyzer.are_stepwise_descending_notes()
 
     def is_seven_six_suspension_candidate(self):
@@ -44,9 +44,9 @@ class SuspensionWitness:
         self.is_all_sixths() and \
         self.voices_stay_put_for_second_adjacency():
             self.suspension_leaves = []
-            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[0])
-            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[0])
-            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[0])
+            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[self.staff_index])
+            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[self.staff_index])
+            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[self.staff_index])
             return True
         else:
             return False
@@ -58,9 +58,9 @@ class SuspensionWitness:
         self.moves_to_third() and \
         self.voices_stay_put_for_second_adjacency():
             self.suspension_leaves = []
-            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[0])
-            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[0])
-            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[0])
+            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[self.staff_index])
+            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[self.staff_index])
+            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[self.staff_index])
             print(True)
             return True
         else:
@@ -71,6 +71,12 @@ class SuspensionWitness:
             markup = abjad.Markup(str(x+1), direction = abjad.Up)
             abjad.attach(markup, leaf)
 
+    def is_suspension_candidate(self):
+        if self.is_seven_six_suspension_candidate() or \
+        self.is_four_three_suspension_candidate():
+            return True
+        else:
+            return False
 
     def color_suspension_candidate(self):
         if self.is_seven_six_suspension_candidate():
