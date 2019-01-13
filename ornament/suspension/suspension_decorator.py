@@ -1,16 +1,24 @@
 import itertools
 import random
 import abjad
+import time
+from ornament.passaggi.passaggi import Passaggio
 from ornament.suspension.suspension_witness import SuspensionWitness
 from ornament.adjacency.adjacency_witness import AdjacencyWitness
-from ornament.suspension.suspension_dictionary import suspension_dictionary
+
+random.seed(4)
 
 class SuspensionDecorator:
-    def __init__(self, input_score):
-        self.input_score = input_score
+    def __init__(self, scale, pitch_range, suspension_dictionary):
+        self.scale = scale
+        self.pitch_range = pitch_range
+        self.suspension_dictionary = suspension_dictionary
 
-    def make_empty_output_score(self):
-        self.output_score = abjad.Score([abjad.Staff() for staff in self.input_score])
+    def __call__(self, input_score):
+        self.input_score = input_score
+        output_score = self.decorate_score()
+        return output_score
+
 
     def witness_suspensions(self):
         self.suspension_witness = SuspensionWitness()
@@ -18,13 +26,61 @@ class SuspensionDecorator:
         for first, second, third in zip(self.vertical_moments, self.vertical_moments[1:], self.vertical_moments[2:]):
                 self.identify_suspension_leaves_in_voice_pairs((first, second, third))
         self.possible_suspensions = self.suspension_witness.possible_suspensions
-        print(self.possible_suspensions)
 
     def identify_suspension_leaves_in_voice_pairs(self, moments):
         for index_pair in itertools.combinations(range(len(self.input_score)), 2):
             first_adjacency = AdjacencyWitness(moments[0], moments[1], index_pair)
             second_adjacency = AdjacencyWitness(moments[1], moments[2], index_pair)
             self.suspension_witness(first_adjacency, second_adjacency, index_pair)
-            # debug coloring
-            if self.suspension_witness.is_suspension_candidate():
-                self.suspension_witness.color_suspension_candidate()
+            self.suspension_witness.is_suspension_candidate()
+            #     self.suspension_witness.color_suspension_candidate()
+
+    def choose_suspension_from_list(self, the_list):
+        if 1 == len(the_list):
+            return the_list[0]
+        else:
+            return random.choice(the_list)
+
+    def choose_suspensions(self):
+        # build a list of suspensions to suspend
+        self.chosen_suspensions = []
+        for offset_key in self.possible_suspensions.keys():
+            suspensions_by_staff_dict = self.possible_suspensions[offset_key]
+            dict_keys = list(suspensions_by_staff_dict.keys())
+            staff_index = random.choice(dict_keys)
+            suspension = suspensions_by_staff_dict[staff_index][0]
+            self.chosen_suspensions.append(suspension)
+
+    def get_note_by_offset(offset, staff):
+        for note in staff:
+            if abjad.inspect(note).vertical_moment().offset == offset:
+                return note
+        else:
+            return None
+
+    def build_suspended_staff(self, staff_index, staff):
+        output_staff = abjad.mutate(staff).copy()
+        if staff_index in self.decorating_dictionary:
+            suspensions = self.decorating_dictionary[staff_index]
+        else:
+            return output_staff
+        for suspension in suspensions:
+            start_offset = suspension.offsets[0]
+            suspension_leaves = suspension(self.scale, self.pitch_range, self.suspension_dictionary)
+        #     print(suspension_leaves)
+        #     abjad.Selection(suspension_leaves)
+        #     starting_note = self.get_note_by_offset(offset, staff)
+        #     to_be_suspended = abjad.select([abjad.inspect(starting_note).leaf(n) for n in range(3)])
+        #     abjad.mutate(to_be_suspended).replace(suspension_leaves)
+        # return output_staff
+
+    def decorate_score(self):
+        self.witness_suspensions()
+        print(self.possible_suspensions)
+        self.choose_suspensions()
+        print(self.chosen_suspensions)
+        for s in self.chosen_suspensions:
+            s(self.scale, self.pitch_range, self.suspension_dictionary)
+        # for staff_index, staff in enumerate(self.input_score):
+        #     output_score.append(self.suspend_staff(staff_index, staff))
+        # return output_score

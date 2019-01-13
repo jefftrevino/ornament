@@ -76,16 +76,21 @@ class SuspensionWitness:
             abjad.attach(markup, leaf)
 
     def add_possible_suspension(self, suspension):
+        staff_index = self.staff_index
         start_offset = suspension.offsets[0]
-        if start_offset in self.possible_suspensions:
-            self.possible_suspensions[start_offset].append(suspension)
+        if start_offset not in self.possible_suspensions:
+            self.possible_suspensions[start_offset] = {}
+        offset_dict = self.possible_suspensions[start_offset]
+        if staff_index in offset_dict:
+            offset_dict[staff_index].append(suspension)
         else:
-            self.possible_suspensions[start_offset] = [suspension]
+            offset_dict[staff_index] = [suspension]
+
 
     def is_suspension_candidate(self):
         if self.is_seven_six_suspension_candidate() or \
         self.is_four_three_suspension_candidate():
-            self.add_possible_suspension(Suspension(abjad.Selection(self.suspension_leaves)))
+            self.add_possible_suspension(Suspension(abjad.Selection(self.suspension_leaves), self.staff_index))
             return True
         else:
             return False
