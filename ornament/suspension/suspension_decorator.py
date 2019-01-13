@@ -67,12 +67,6 @@ class SuspensionDecorator:
         for suspension in suspensions:
             start_offset = suspension.offsets[0]
             suspension_leaves = suspension(self.scale, self.pitch_range, self.suspension_dictionary)
-        #     print(suspension_leaves)
-        #     abjad.Selection(suspension_leaves)
-        #     starting_note = self.get_note_by_offset(offset, staff)
-        #     to_be_suspended = abjad.select([abjad.inspect(starting_note).leaf(n) for n in range(3)])
-        #     abjad.mutate(to_be_suspended).replace(suspension_leaves)
-        # return output_staff
 
     def decorate_score(self):
         self.witness_suspensions()
@@ -81,6 +75,3 @@ class SuspensionDecorator:
         print(self.chosen_suspensions)
         for s in self.chosen_suspensions:
             s(self.scale, self.pitch_range, self.suspension_dictionary)
-        # for staff_index, staff in enumerate(self.input_score):
-        #     output_score.append(self.suspend_staff(staff_index, staff))
-        # return output_score
