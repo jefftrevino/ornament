@@ -1,7 +1,7 @@
 import abjad
 from abjadext import tonality
 import itertools
-from adjacency_witness import AdjacencyWitness
+from ../3adjacency/adjacency_witness import AdjacencyWitness
 from suspension_witness import SuspensionWitness
 
 score = abjad.Score()
