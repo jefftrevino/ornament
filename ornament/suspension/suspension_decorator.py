@@ -19,7 +19,6 @@ class SuspensionDecorator:
         output_score = self.decorate_score()
         return output_score
 
-
     def witness_suspensions(self):
         self.suspension_witness = SuspensionWitness()
         self.vertical_moments = list(abjad.iterate(self.input_score).vertical_moments())
