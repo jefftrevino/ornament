@@ -2,10 +2,10 @@ import abjad
 import random
 
 class Suspension:
-    def __init__(self, selection, voice_index):
-        self.selection = selection
-        self.offsets = [abjad.inspect(note).vertical_moment().offset for note in selection]
-        self.voice_index = voice_index
+    def __init__(self, selections, index_pair):
+        self.selections = selections
+        self.offsets = [abjad.inspect(note).vertical_moment().offset for note in selections['top']]
+        self.index_pair = index_pair
 
     def __call__(self, scale, pitch_range, suspension_dictionary):
         self.scale = scale
@@ -14,8 +14,13 @@ class Suspension:
         ornament_name, ornament = self.look_up_ornament(suspension_dictionary)
         leaves = self.unpitched_leaves_from_ornament(ornament)
         leaves = self.pitch_leaves_with_ornament(leaves, ornament)
-        abjad.mutate(self.selection).replace(leaves)
+        abjad.mutate(self.selections['top']).replace(leaves)
+        self.label_leaves(self.selections['bottom'])
 
+    def label_leaves(self, leaves):
+        for leaf in leaves:
+            label = abjad.LilyPondComment('no ornament')
+            abjad.attach(label, leaf)
 
     def sorted_pitch_list_from_scale_and_pitch_range(self):
         named_pitch_set = self.scale.create_named_pitch_set_in_pitch_range(self.pitch_range)
@@ -29,7 +34,7 @@ class Suspension:
 
     def unpitched_leaves_from_ornament(self, ornament):
         ratio = ornament[0]
-        duration = sum([x.written_duration for x in self.selection])
+        duration = sum([x.written_duration for x in self.selections['top']])
         tuplet = abjad.Tuplet().from_duration_and_ratio(duration, ratio)
         tuplet.trivialize()
         if tuplet.trivial():
@@ -38,7 +43,7 @@ class Suspension:
 
     def pitch_leaves_with_ornament(self, passaggio, ornament):
         pitch_list = ornament[1]
-        witness_index = self.pitch_list.index(self.selection[0].written_pitch)
+        witness_index = self.pitch_list.index(self.selections['top'][0].written_pitch)
         pitch_indexes = [witness_index + x for x in pitch_list]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
         leaves = abjad.select(passaggio).leaves()

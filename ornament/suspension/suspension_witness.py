@@ -6,11 +6,23 @@ class SuspensionWitness:
 
     def __init__(self):
         self.possible_suspensions = {}
+        self.test_dict = {'fourthree':[
+                        self.top_voice_descends_by_step,
+                        self.moves_to_third,
+                        self.voices_stay_put_for_second_adjacency,
+                                    ],
+
+                        'sevensix': [
+                        self.top_voice_descends_by_step,
+                        self.is_all_sixths,
+                        self.voices_stay_put_for_second_adjacency,
+                                    ]
+                        }
 
     def __call__(self, first_adjacency, second_adjacency, index_pair):
         self.first_adjacency = first_adjacency
         self.second_adjacency = second_adjacency
-        self.staff_index = index_pair[0]
+        self.index_pair = index_pair
 
     def is_all_sixths(self):
         if '6' == \
@@ -36,39 +48,24 @@ class SuspensionWitness:
 
     def top_voice_descends_by_step(self):
         analyzer = tonality.analyze([
-            self.first_adjacency.present_moment.start_leaves[self.staff_index],
-            self.first_adjacency.future_moment.start_leaves[self.staff_index],
+            self.first_adjacency.present_moment.start_leaves[self.index_pair[0]],
+            self.first_adjacency.future_moment.start_leaves[self.index_pair[0]],
             ])
         return analyzer.are_stepwise_descending_notes()
 
-    def is_seven_six_suspension_candidate(self):
-        # top voice ascends by steps
-        # all intervals are sixths
-        # both voices stay put after descent
-        if self.top_voice_descends_by_step() and \
-        self.is_all_sixths() and \
-        self.voices_stay_put_for_second_adjacency():
-            self.suspension_leaves = []
-            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[self.staff_index])
-            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[self.staff_index])
-            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[self.staff_index])
-            return True
-        else:
-            return False
+    def register_suspension_leaves(self):
+        top = (self.first_adjacency.present_moment.start_leaves[self.index_pair[0]],
+        self.first_adjacency.future_moment.start_leaves[self.index_pair[0]],
+        self.second_adjacency.future_moment.start_leaves[self.index_pair[0]],
+        )
+        bottom = (self.first_adjacency.present_moment.start_leaves[self.index_pair[1]],
+        self.first_adjacency.future_moment.start_leaves[self.index_pair[1]],
+        self.second_adjacency.future_moment.start_leaves[self.index_pair[1]],
+        )
+        self.suspension_leaves = {}
+        self.suspension_leaves['top'] = abjad.select(top[:])
+        self.suspension_leaves['bottom'] = abjad.select(bottom[:])
 
-    def is_four_three_suspension_candidate(self):
-        # top voice ascends by step to a third
-        # both voices stay put in second adjacency
-        if self.top_voice_descends_by_step() and \
-        self.moves_to_third() and \
-        self.voices_stay_put_for_second_adjacency():
-            self.suspension_leaves = []
-            self.suspension_leaves.append(self.first_adjacency.present_moment.start_leaves[self.staff_index])
-            self.suspension_leaves.append(self.first_adjacency.future_moment.start_leaves[self.staff_index])
-            self.suspension_leaves.append(self.second_adjacency.future_moment.start_leaves[self.staff_index])
-            return True
-        else:
-            return False
     def add_markup_to_suspension_leaves(self, color):
         for x, leaf in enumerate(self.suspension_leaves):
             abjad.override(leaf).note_head.color = color
@@ -76,24 +73,23 @@ class SuspensionWitness:
             abjad.attach(markup, leaf)
 
     def add_possible_suspension(self, suspension):
-        staff_index = self.staff_index
+        index_pair = self.index_pair
         start_offset = suspension.offsets[0]
         if start_offset not in self.possible_suspensions:
             self.possible_suspensions[start_offset] = {}
         offset_dict = self.possible_suspensions[start_offset]
-        if staff_index in offset_dict:
-            offset_dict[staff_index].append(suspension)
+        if index_pair in offset_dict:
+            offset_dict[index_pair].append(suspension)
         else:
-            offset_dict[staff_index] = [suspension]
-
+            offset_dict[index_pair] = [suspension]
 
     def is_suspension_candidate(self):
-        if self.is_seven_six_suspension_candidate() or \
-        self.is_four_three_suspension_candidate():
-            self.add_possible_suspension(Suspension(abjad.Selection(self.suspension_leaves), self.staff_index))
-            return True
-        else:
-            return False
+        for key in self.test_dict.keys():
+            if not (False in [test_function() for test_function in self.test_dict[key]]):
+                self.register_suspension_leaves()
+                self.add_possible_suspension(Suspension(self.suspension_leaves, self.index_pair))
+                return True
+        return False
 
     def color_suspension_candidate(self):
         if self.is_seven_six_suspension_candidate():
