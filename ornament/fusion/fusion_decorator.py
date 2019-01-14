@@ -1,3 +1,8 @@
+# fusion decorator
+# Jeff Trevino, 2019
+# This class uses a fusion witness to find possible fusions
+# And then it fuses them
+
 import abjad
 from ornament.fusion.fusion_witness import FusionWitness
 

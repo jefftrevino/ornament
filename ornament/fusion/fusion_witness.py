@@ -1,5 +1,5 @@
-# This class is intended to assess an entire polyphonic texture
-# and identify consecutive identical pitches to possibly fuse together
+# This class assesses an entire polyphonic texture
+# and identifies consecutive identical pitches to possibly fuse together
 
 import abjad
 from ornament.fusion.fusion import Fusion

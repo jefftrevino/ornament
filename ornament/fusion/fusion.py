@@ -5,10 +5,11 @@
 import abjad
 import random
 
-random.seed(0)
+random.seed(1)
 
 class Fusion:
     def __init__(self, staff_index, consecutive_leaves):
+        self.proportion = None
         self.staff_index = staff_index
         self.selection = abjad.select(consecutive_leaves)
         self.duration = sum([l.written_duration for l in self.selection])
@@ -21,10 +22,15 @@ class Fusion:
         if debug:
             self.color_leaves()
         else:
-            proportions_list = fusion_dictionary[self.duration]
-            proportion = random.choice(proportions_list)
-            leaves = self.build_fused_leaves(proportion)
+            if not self.proportion:
+                self.choose_proportion(fusion_dictionary)
+            leaves = self.build_fused_leaves(self.proportion)
             abjad.mutate(self.selection).replace(leaves)
+
+    def choose_proportion(self, fusion_dictionary):
+        proportions_list = fusion_dictionary[self.duration]
+        self.proportion = random.choice(proportions_list)
+
 
     def color_leaves(self):
             abjad.override(self.selection[0]).note_head.color = 'red'
