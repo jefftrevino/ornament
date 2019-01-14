@@ -1,4 +1,4 @@
-# fusion candidate
+# fusion
 # Jeffrey Trevino, 2019
 # model of consecutive same-pitched leaves to maybe fuse
 

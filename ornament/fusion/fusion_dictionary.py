@@ -1,4 +1,4 @@
-# fusion fusion_dictionary
+# fusion dictionary
 # Jeff Trevino, 2019
 # this dictionary gives fusions possible ways to fuse
 

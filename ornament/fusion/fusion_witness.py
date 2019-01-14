@@ -1,3 +1,5 @@
+# fusion witness
+# Jeff Trevino, 2019
 # This class assesses an entire polyphonic texture
 # and identifies consecutive identical pitches to possibly fuse together
 
