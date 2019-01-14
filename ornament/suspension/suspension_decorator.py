@@ -4,7 +4,7 @@ import abjad
 import time
 from ornament.passaggi.passaggi import Passaggio
 from ornament.suspension.suspension_witness import SuspensionWitness
-from ornament.adjacency.adjacency_witness import AdjacencyWitness
+from ornament.adjacency.adjacency import Adjacency
 
 random.seed(4)
 
@@ -16,8 +16,7 @@ class SuspensionDecorator:
 
     def __call__(self, input_score):
         self.input_score = input_score
-        output_score = self.decorate_score()
-        return output_score
+        self.decorate_score()
 
     def witness_suspensions(self):
         self.suspension_witness = SuspensionWitness()
@@ -28,8 +27,8 @@ class SuspensionDecorator:
 
     def identify_suspension_leaves_in_voice_pairs(self, moments):
         for index_pair in itertools.combinations(range(len(self.input_score)), 2):
-            first_adjacency = AdjacencyWitness(moments[0], moments[1], index_pair)
-            second_adjacency = AdjacencyWitness(moments[1], moments[2], index_pair)
+            first_adjacency = Adjacency(moments[0], moments[1], index_pair)
+            second_adjacency = Adjacency(moments[1], moments[2], index_pair)
             self.suspension_witness(first_adjacency, second_adjacency, index_pair)
             self.suspension_witness.is_suspension_candidate()
             #     self.suspension_witness.color_suspension_candidate()
@@ -69,8 +68,6 @@ class SuspensionDecorator:
 
     def decorate_score(self):
         self.witness_suspensions()
-        print(self.possible_suspensions)
         self.choose_suspensions()
-        print(self.chosen_suspensions)
         for s in self.chosen_suspensions:
             s(self.scale, self.pitch_range, self.suspension_dictionary)

@@ -4,7 +4,6 @@ import random
 class Suspension:
     def __init__(self, selection, voice_index):
         self.selection = selection
-        print(self.selection)
         self.offsets = [abjad.inspect(note).vertical_moment().offset for note in selection]
         self.voice_index = voice_index
 
