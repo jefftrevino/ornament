@@ -17,12 +17,21 @@ class Fusion:
         self.stop_offset = self.get_offset_after_note_duration(self.selection[-1])
         self.timespan = abjad.Timespan(self.start_offset, self.stop_offset)
 
-    def __call__(self, fusion_dictionary):
-        proportions_list = fusion_dictionary[self.duration]
-        leaves = self.build_fused_leaves()
-        abjad.mutate(self.selection).replace(leaves)
+    def __call__(self, fusion_dictionary, debug=False):
+        if debug:
+            self.color_leaves()
+        else:
+            proportions_list = fusion_dictionary[self.duration]
+            proportion = random.choice(proportions_list)
+            leaves = self.build_fused_leaves(proportion)
+            abjad.mutate(self.selection).replace(leaves)
 
-    def pitch_leaves(leaves):
+    def color_leaves(self):
+            abjad.override(self.selection[0]).note_head.color = 'red'
+            abjad.override(self.selection[-1]).note_head.color = 'red'
+
+
+    def pitch_leaves(self, leaves):
         for leaf in leaves:
             leaf.written_pitch = self.pitch
 

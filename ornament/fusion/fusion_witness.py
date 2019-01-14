@@ -10,6 +10,7 @@ class FusionWitness:
 
     def __call__(self, score):
         self.catalog_fusion_candidates(score)
+        return self.possible_fusions
 
     def have_same_pitch(leaf1, leaf2):
         if leaf1.written_pitch == leaf2.written_pitch:
