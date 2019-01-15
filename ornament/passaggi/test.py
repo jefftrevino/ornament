@@ -1,17 +1,24 @@
 # passaggi test code
 # Jeff Trevino; Winter, 2019
-# ornaments each melody note with a passaggio
+# adds suspensions,
+# fuses non-suspension halves,
+# ornaments unisons,
+# adds passaggi
 
 import random
 import abjad
-from passaggi import Passaggio
+from ornament.passaggi.passaggio import Passaggio
 from abjadext import tonality
-from ornaments import ornament_dictionary
+from ornament.passaggi.passaggi_dictionary import passaggi_dictionary
+from ornament.unison.unison_dictionary import unison_dictionary
+from ornament.skeletons import skeleton
+from ornament.unison.unison_decorator import UnisonDecorator
+from ornament.suspension.suspension_decorator import SuspensionDecorator
+from ornament.suspension.suspension_dictionary import suspension_dictionary
+from ornament.passaggi.ornament_decorator import OrnamentDecorator
 
 scale = tonality.Scale(('c', 'major'))
 pitch_range = abjad.pitch.PitchRange('[E3, C6]')
-
-score = abjad.Score()
 
 def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
@@ -29,13 +36,14 @@ def ornament_melody(melody):
         out.append(replacement_leaves)
     return out
 
-# staff = abjad.Staff("c'4 d' c' e' c' f' c' b c' a c' g c' c' c'")
-staff = abjad.Staff("c'4 c' c' c'")
-copy = abjad.mutate(staff).copy()
-for leaf in copy:
-    abjad.mutate(leaf).transpose(-12)
-abjad.attach(abjad.Clef('bass'), copy[0])
-output = ornament_melody(staff)
-score.append(output)
-score.append(copy)
-abjad.show(score)
+def fix_meter(score):
+    for staff in score:
+        abjad.mutate(staff[:]).split(durations=[(2,4)], cyclic=True)
+
+suspension_decorator = SuspensionDecorator(scale, pitch_range, suspension_dictionary)
+suspension_decorator(skeleton)
+dict_dict = {'unison': unison_dictionary, 'passaggi': passaggi_dictionary}
+ornament_decorator = OrnamentDecorator(scale, pitch_range, dict_dict)
+ornament_decorator(skeleton)
+fix_meter(skeleton)
+abjad.show(skeleton)
