@@ -50,6 +50,7 @@ class Passaggio:
         dict_keys = list(interval_dictionary.keys())
         the_key = random.choice(dict_keys)
         ornament = interval_dictionary[the_key]
+        self.ornament = ornament
         return (the_key, ornament)
 
     def invert_ornament(self, ornament, direction):
@@ -60,18 +61,21 @@ class Passaggio:
     def get_interval_from_witnesses(self, witnesses):
         self.present = witnesses[0]
         self.future = witnesses[1]
-        interval = abjad.NamedInterval.from_pitch_carriers(
-            self.present[0].written_pitch,
-            self.future[0].written_pitch
-            )
-        return interval
+        if isinstance(self.present, abjad.LogicalTie):
+            from_pitch = self.present[0].written_pitch
+            to_pitch = self.future[0].written_pitch
+        elif isinstance(self.present, abjad.Note):
+            from_pitch = self.present.written_pitch
+            to_pitch = self.future.written_pitch
+        interval = abjad.NamedInterval.from_pitch_carriers(from_pitch, to_pitch)
+        self.interval = interval
 
-    def look_up_ornament(self, interval):
-        interval_dictionary = self.ornament_dictionary[interval.name[-1:]]
+    def look_up_ornament(self):
+        interval_dictionary = self.ornament_dictionary[self.interval.name[-1:]]
         ornament_name, ornament = self.choose_ornament_from_dictionary(interval_dictionary)
         ornament = self.invert_ornament(
             ornament,
-            interval.direction_number
+            self.interval.direction_number
             )
         return ornament_name, ornament
 
@@ -86,8 +90,9 @@ class Passaggio:
         abjad.attach(markup, first_leaf)
 
     def passaggio_from_ornament(self, witnesses):
-        interval = self.get_interval_from_witnesses(witnesses)
-        ornament_name, ornament = self.look_up_ornament(interval)
-        passaggio = self.create_ornament_leaves(ornament)
-        self.label_ornament(passaggio, ornament_name)
+        if not self.ornament:
+            self.get_interval_from_witnesses(witnesses)
+            self.ornament_name, self.ornament = self.look_up_ornament()
+        passaggio = self.create_ornament_leaves(self.ornament)
+        self.label_ornament(passaggio, self.ornament_name)
         return passaggio

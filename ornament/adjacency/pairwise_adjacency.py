@@ -27,8 +27,8 @@ class PairwiseAdjacency:
             interval1,
             interval2
             )
-        # if interval.semitones > 12:
-        #    interval -= abjad.NamedInterval('P8')
+        if interval.semitones > 12:
+            interval -= abjad.NamedInterval('P8')
         return interval
 
 
