@@ -4,7 +4,7 @@ import abjad
 import time
 from ornament.passaggi.passaggio import Passaggio
 from ornament.suspension.suspension_witness import SuspensionWitness
-from ornament.adjacency.adjacency import Adjacency
+from ornament.adjacency.pairwise_adjacency import PairwiseAdjacency
 
 random.seed(4)
 
@@ -27,8 +27,8 @@ class SuspensionDecorator:
 
     def identify_suspension_leaves_in_voice_pairs(self, moments):
         for index_pair in itertools.combinations(range(len(self.input_score)), 2):
-            first_adjacency = Adjacency(moments[0], moments[1], index_pair)
-            second_adjacency = Adjacency(moments[1], moments[2], index_pair)
+            first_adjacency = PairwiseAdjacency(moments[0], moments[1], index_pair)
+            second_adjacency = PairwiseAdjacency(moments[1], moments[2], index_pair)
             self.suspension_witness(first_adjacency, second_adjacency, index_pair)
             self.suspension_witness.is_suspension_candidate()
             #     self.suspension_witness.color_suspension_candidate()

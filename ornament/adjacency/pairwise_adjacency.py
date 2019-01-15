@@ -1,6 +1,6 @@
 import abjad
 
-class Adjacency:
+class PairwiseAdjacency:
     def __init__(self, present_moment, future_moment, index_pair):
         # index pair compares two voices out of the supplied moments' start leaves
         self.present_moment = present_moment
@@ -33,7 +33,7 @@ class Adjacency:
 
 
     def __repr__(self):
-        return "Adjacency(\n\t" + \
+        return "PairwiseAdjacency(\n\t" + \
             "from: " + str(self.from_harmonic_interval.name[1:]) + "\n\t" + \
             "to: " + str(self.to_harmonic_interval.name[1:]) + "\n\t" + \
             "top: " + str(self.top_melodic_interval) + "\n\t" + \
