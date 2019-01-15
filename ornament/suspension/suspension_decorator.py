@@ -2,7 +2,7 @@ import itertools
 import random
 import abjad
 import time
-from ornament.passaggi.passaggi import Passaggio
+from ornament.passaggi.passaggio import Passaggio
 from ornament.suspension.suspension_witness import SuspensionWitness
 from ornament.adjacency.adjacency import Adjacency
 

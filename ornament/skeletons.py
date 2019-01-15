@@ -30,7 +30,7 @@ middle = abjad.Staff(" \
 ")
 
 bottom = abjad.Staff(" \
-\clef bass f f d' d' g g g g \
+\clef bass a a d' d' g g g g \
 a a c' c' a a b b \
 c' c' e' e' e e c c \
 c c e e g g c' c' \

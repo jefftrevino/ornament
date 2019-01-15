@@ -15,11 +15,11 @@ class Suspension:
         leaves = self.unpitched_leaves_from_ornament(ornament)
         leaves = self.pitch_leaves_with_ornament(leaves, ornament)
         abjad.mutate(self.selections['top']).replace(leaves)
-        self.label_leaves(self.selections['bottom'])
+        self.label_leaves(self.selections['bottom'], 'no ornament')
 
-    def label_leaves(self, leaves):
+    def label_leaves(self, leaves, label):
         for leaf in leaves:
-            label = abjad.LilyPondComment('no ornament')
+            label = abjad.LilyPondComment(label)
             abjad.attach(label, leaf)
 
     def sorted_pitch_list_from_scale_and_pitch_range(self):
@@ -50,6 +50,7 @@ class Suspension:
         for leaf, pitch in zip(leaves, pitches):
             if not isinstance(leaf, abjad.Rest):
                 leaf.written_pitch = pitch
+        self.label_leaves(leaves, 'suspension')
         return leaves
 
     def __repr__(self):
