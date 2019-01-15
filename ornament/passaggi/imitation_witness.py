@@ -16,12 +16,10 @@ class ImitationWitness:
         self.score = score
         moments = list(abjad.iterate(score).vertical_moments())
         for tetramoment in zip(moments, moments[1:], moments[2:], moments[3:]):
-            print(tetramoment)
             if self.begins_in_valid_metrical_position(tetramoment[0]) \
             and self.all_contain_three_start_notes(tetramoment):
                 adjacencies = self.make_adjacencies(tetramoment)
                 self.witness_imitations_in_score(adjacencies)
-
         if debug:
             for i in self.possible_imitations:
                 self.color_imitation(i)
@@ -36,7 +34,6 @@ class ImitationWitness:
         if 0 == first_moment.offset % abjad.Duration(1,4):
             return True
         return False
-
 
     def witness_imitations_in_score(self, adjacencies):
         self.witness_triple_imitations(adjacencies)
@@ -63,22 +60,40 @@ class ImitationWitness:
         return adjacencies
 
     def is_triple_imitation(self, adjacencies):
-        if adjacencies[0].melodic_interval == \
-        adjacencies[1].melodic_interval == \
-        adjacencies[2].melodic_interval:
+        intervals = [a.melodic_interval for a in adjacencies]
+        if self.are_equivalent_for_imitation(intervals):
             return True
         return False
 
     def is_double_imitation(self, adjacencies):
-        if adjacencies[0].melodic_interval == adjacencies[1].melodic_interval:
-            return (0,1)
-        elif adjacencies[1].melodic_interval == adjacencies[2].melodic_interval:
-            return (1,2)
+        index_tuples = [(0,1), (1,2)]
+        for t in index_tuples:
+            intervals = [adjacencies[i].melodic_interval for i in t]
+            if self.are_equivalent_for_imitation(intervals):
+                return t
         else:
-            return ()
+            return False
+
+    def have_same_direction(self, intervals):
+        test = intervals[0].name[0]
+        if False in [test == i.name[0] for i in intervals]:
+            return False
+        return True
+
+    def have_same_diatonic_ambitus(self, intervals):
+        test = intervals[0].name[-1]
+        if False in [test == i.name[-1] for i in intervals]:
+            return False
+        return True
+
+    def are_equivalent_for_imitation(self, intervals):
+        if self.have_same_direction(intervals) and \
+        self.have_same_diatonic_ambitus(intervals):
+            return True
+        return False
 
     def color_imitation(self, imitation):
         adjacencies = imitation.adjacencies
         for a in adjacencies:
             abjad.override(a.from_note).note_head.color = 'red'
-            abjad.override(a.to_note).note_head.color = 'red'
+            # abjad.override(a.to_note).note_head.color = 'red'

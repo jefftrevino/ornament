@@ -23,5 +23,5 @@ class Adjacency:
 
     def __repr__(self):
         return "Adjacency(\n\t" + \
-            "interval: " + str(self.from_harmonic_interval.name[1:]) + "\n\t" + \
+            "interval: " + str(self.melodic_interval) + "\n\t" + \
             ")"
