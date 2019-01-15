@@ -16,6 +16,7 @@ from ornament.unison.unison_decorator import UnisonDecorator
 from ornament.suspension.suspension_decorator import SuspensionDecorator
 from ornament.suspension.suspension_dictionary import suspension_dictionary
 from ornament.passaggi.ornament_decorator import OrnamentDecorator
+from ornament.passaggi.imitation_witness import ImitationWitness
 
 scale = tonality.Scale(('c', 'major'))
 pitch_range = abjad.pitch.PitchRange('[E3, C6]')
@@ -45,5 +46,7 @@ suspension_decorator(skeleton)
 dict_dict = {'unison': unison_dictionary, 'passaggi': passaggi_dictionary}
 ornament_decorator = OrnamentDecorator(scale, pitch_range, dict_dict)
 ornament_decorator(skeleton)
+imitation_witness = ImitationWitness(scale, pitch_range)
+imitation_witness(skeleton, debug=True)
 fix_meter(skeleton)
 abjad.show(skeleton)
