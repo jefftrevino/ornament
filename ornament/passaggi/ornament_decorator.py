@@ -5,7 +5,10 @@
 # then traverses for passaggi
 
 import abjad
+import random
 from ornament.passaggi.imitation_witness import ImitationWitness
+from ornament.passaggi.passaggio import Passaggio
+from ornament.adjacency.adjacency import Adjacency
 
 class OrnamentDecorator:
     def __init__(self, scale, pitch_range, dict_dict):
@@ -20,6 +23,7 @@ class OrnamentDecorator:
         self.debug = debug
         self.fuse_moments()
         self.add_imitations()
+        self.add_passaggi()
 
     def is_suspension_indicator(self, indicator):
         if 'suspension' == indicator.string:
@@ -53,21 +57,10 @@ class OrnamentDecorator:
         if indicators:
             self.attach_indicators_to_leaf(indicators, fused[0])
 
-    def are_both_quarters(self, one, two):
-        if abjad.Duration(1,4) == one.written_duration == two.written_duration:
-            return True
-        print("not both quarters")
-        print(one, two)
-        return False
-
-    def contains_only_quarters(self, note_pair):
-        if abjad.Duration(1,4) == note_pair[0].written_duration == note_pair[1].written_duration:
-            return True
-        return False
-
-    def all_quarters(self, moment, moment_two):
-        for staff_index in range(len(self.score)):
-            if not self.contains_only_quarters((moment.start_notes[staff_index], moment_two.start_notes[staff_index])):
+    def moment_contains_only_base_values(self, moment):
+        base_value = 2 * self.resolution
+        for note in moment.start_notes:
+            if not base_value == note.written_duration:
                 return False
         return True
 
@@ -105,3 +98,25 @@ class OrnamentDecorator:
         for imitation in self.possible_imitations:
             if imitation.adjacencies[0].from_note in imitation.pitch_list:
                 imitation(passaggi_dict)
+
+    def choose_adjacency(self, adjacencies):
+        chosen = random.choice(adjacencies)
+        while 'P1' == chosen.melodic_interval.name:
+            chosen = random.choice(adjacencies)
+        return chosen
+
+    def add_passaggi(self):
+        moments = list(abjad.iterate(self.score).vertical_moments())
+        for moment_pair in zip(moments, moments[1:]):
+            first_starts = moment_pair[0].start_notes
+            next_starts = moment_pair[1].start_notes
+            if len(self.score) == len(first_starts) == len(next_starts):
+                if self.moment_contains_only_base_values(moment_pair[0]):
+                    adjacencies = [Adjacency(moment_pair[0], moment_pair[1], i) for i in range(3)]
+                    if False in ['P1' == a.melodic_interval.name for a in adjacencies]:
+                        chosen = self.choose_adjacency(adjacencies)
+                        witnesses = (chosen.from_note, chosen.to_note)
+                        dict = self.dict_dict['passaggi']
+                        passaggio = Passaggio(dict, self.scale, self.pitch_range)
+                        leaves = passaggio(witnesses)
+                        abjad.mutate(chosen.from_note).replace(leaves)

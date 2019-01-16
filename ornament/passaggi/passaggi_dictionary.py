@@ -28,5 +28,8 @@ passaggi_dictionary = {
         'mezzo circulo tirata': ([1] * 8, [0, -1, -2, -1, 0, 1, 2, 3]),
         'tirata suspirans': ([-2, 3, 1, 1, 1], [0, 0, 1, 2, 3]),
         },
+    '8': {
+        'tirata': ([1] * 8, [1, 2, 3, 4, 5, 6, 7, 8]),
+    }
 
 }

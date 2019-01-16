@@ -15,6 +15,7 @@ class Passaggio:
         # scale: abjadext.tonality.Scale
         # pitch_range abjad.pitch.PitchRange
         self.ornament_dictionary = ornament_dictionary
+        self.ornament = None
         self.scale = scale
         self.pitch_range = pitch_range
         self.pitch_list = self.sorted_pitch_list_from_scale_and_pitch_range()
