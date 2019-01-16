@@ -23,6 +23,7 @@ class ImitationWitness:
         if debug:
             for i in self.possible_imitations:
                 self.color_imitation(i)
+        return self.possible_imitations
 
     def all_contain_three_start_notes(self, tetramoment):
         if False in [3 == len(moment.start_notes) for moment in tetramoment]:
@@ -36,13 +37,15 @@ class ImitationWitness:
         return False
 
     def witness_imitations_in_score(self, adjacencies):
-        self.witness_triple_imitations(adjacencies)
+        if self.witness_triple_imitation(adjacencies):
+            return None
         self.witness_double_imitations(adjacencies)
 
-    def witness_triple_imitations(self, adjacencies):
+    def witness_triple_imitation(self, adjacencies):
         if self.is_triple_imitation(adjacencies):
             imitation = Imitation(self.scale, self.pitch_range, adjacencies)
             self.possible_imitations.append(imitation)
+            return True
 
     def witness_double_imitations(self, adjacencies):
         result = self.is_double_imitation(adjacencies)

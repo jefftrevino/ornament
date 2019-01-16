@@ -1,21 +1,25 @@
-# passaggi decorator
+# ornament (passaggi, unison, and imitation) decorator
 # Jeff Trevino, 2019
 # fuses quarters into halves, unless suspensions,
 # then traverses for imitations
 # then traverses for passaggi
 
 import abjad
+from ornament.passaggi.imitation_witness import ImitationWitness
 
 class OrnamentDecorator:
     def __init__(self, scale, pitch_range, dict_dict):
         self.scale = scale
         self.pitch_range = pitch_range
+        self.dict_dict = dict_dict
 
-    def __call__(self, score):
+    def __call__(self, score, debug=False):
+        first_leaf = abjad.inspect(score[0]).leaf(0)
+        self.resolution = abjad.Duration(first_leaf.written_duration)
         self.score = score
+        self.debug = debug
         self.fuse_moments()
-        # self.add_imitations()
-        # self.add_passaggi()
+        self.add_imitations()
 
     def is_suspension_indicator(self, indicator):
         if 'suspension' == indicator.string:
@@ -28,7 +32,6 @@ class OrnamentDecorator:
             for indicator in indicators:
                 if isinstance(indicator, abjad.LilyPondComment):
                     if self.is_suspension_indicator(indicator):
-                        print("SUSPENSION!")
                         return True
             return False
 
@@ -57,21 +60,6 @@ class OrnamentDecorator:
         print(one, two)
         return False
 
-    def fuse_halves_in_staff(self, staff):
-            pass
-        # selections_to_fuse = []
-        # for index, leaf_pair in enumerate(abjad.iterate(staff).leaf_pairs()):
-        #     if 0 == index % 2:
-        #         # print("DURATION OF FIRST LEAF", leaf_pair[0].written_duration)
-        #         # print("DURATION OF SECOND LEAF", leaf_pair[1].written_duration)
-        #         if self.are_both_quarters(leaf_pair[0], leaf_pair[1]):
-        #             if not self.contains_suspension(leaf_pair) and self:
-        #                 # print("SHOULD BE FUSED")
-        #                 selections_to_fuse.append(leaf_pair)
-        # for selection in selections_to_fuse:
-        #     abjad.mutate(selection).fuse()
-
-
     def contains_only_quarters(self, note_pair):
         if abjad.Duration(1,4) == note_pair[0].written_duration == note_pair[1].written_duration:
             return True
@@ -94,11 +82,26 @@ class OrnamentDecorator:
             pairs.append(pair)
         return pairs
 
-
     def fuse_moments(self):
         for staff in self.score:
             for pair in abjad.iterate(staff).leaf_pairs():
-                if abjad.Duration(1,4) == pair[0].written_duration == pair[1].written_duration \
+                if self.resolution == pair[0].written_duration == pair[1].written_duration \
                 and pair[0].written_pitch == pair[1].written_pitch \
-                and 0 == abjad.inspect(pair[0]).vertical_moment().offset % abjad.Duration(1,2):
+                and 0 == abjad.inspect(pair[0]).vertical_moment().offset % (2 * self.resolution) \
+                and not self.contains_suspension(pair):
                     abjad.mutate(pair).fuse()
+
+    def add_imitations(self):
+        self.witness_imitations()
+        if not self.debug:
+            self.decorate_imitations()
+
+    def witness_imitations(self):
+        imitation_witness = ImitationWitness(self.scale, self.pitch_range)
+        self.possible_imitations = imitation_witness(self.score, debug = self.debug)
+
+    def decorate_imitations(self):
+        passaggi_dict = self.dict_dict['passaggi']
+        for imitation in self.possible_imitations:
+            if imitation.adjacencies[0].from_note in imitation.pitch_list:
+                imitation(passaggi_dict)

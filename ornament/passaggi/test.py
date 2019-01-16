@@ -16,10 +16,10 @@ from ornament.unison.unison_decorator import UnisonDecorator
 from ornament.suspension.suspension_decorator import SuspensionDecorator
 from ornament.suspension.suspension_dictionary import suspension_dictionary
 from ornament.passaggi.ornament_decorator import OrnamentDecorator
-from ornament.passaggi.imitation_witness import ImitationWitness
 
+random.seed(2)
 scale = tonality.Scale(('c', 'major'))
-pitch_range = abjad.pitch.PitchRange('[E3, C6]')
+pitch_range = abjad.pitch.PitchRange('[E2, B5]')
 
 def ornament_melody(melody):
     # ornament each note of a melody with a passaggio:
@@ -37,16 +37,15 @@ def ornament_melody(melody):
         out.append(replacement_leaves)
     return out
 
-def fix_meter(score):
+def fix_meter(score, chop_duration):
     for staff in score:
-        abjad.mutate(staff[:]).split(durations=[(2,4)], cyclic=True)
+        abjad.mutate(staff[:]).split(durations=[chop_duration], cyclic=True)
 
 suspension_decorator = SuspensionDecorator(scale, pitch_range, suspension_dictionary)
 suspension_decorator(skeleton)
+# fix_meter(skeleton, abjad.Duration(1,4))
 dict_dict = {'unison': unison_dictionary, 'passaggi': passaggi_dictionary}
 ornament_decorator = OrnamentDecorator(scale, pitch_range, dict_dict)
-ornament_decorator(skeleton)
-imitation_witness = ImitationWitness(scale, pitch_range)
-imitation_witness(skeleton, debug=True)
-fix_meter(skeleton)
+ornament_decorator(skeleton, debug=False)
+fix_meter(skeleton, abjad.Duration(1,4))
 abjad.show(skeleton)

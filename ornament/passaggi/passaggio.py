@@ -19,7 +19,8 @@ class Passaggio:
         self.pitch_range = pitch_range
         self.pitch_list = self.sorted_pitch_list_from_scale_and_pitch_range()
 
-    def __call__(self, witnesses):
+    def __call__(self, witnesses, debug=False):
+        self.debug = debug
         return self.passaggio_from_ornament(witnesses)
 
     def sorted_pitch_list_from_scale_and_pitch_range(self):
@@ -29,7 +30,6 @@ class Passaggio:
     def unpitched_leaves_from_ornament(self, ornament):
         ratio = ornament[0]
         duration = self.present.written_duration
-        print(duration)
         tuplet = abjad.Tuplet().from_duration_and_ratio(duration, ratio)
         tuplet.trivialize()
         if tuplet.trivial():
@@ -38,7 +38,10 @@ class Passaggio:
 
     def pitch_leaves_with_ornament(self, passaggio, ornament):
         pitch_list = ornament[1]
-        witness_index = self.pitch_list.index(self.present[0].written_pitch)
+        if isinstance(self.present, abjad.LogicalTie):
+            witness_index = self.pitch_list.index(self.present[0].written_pitch)
+        elif isinstance(self.present, abjad.Note):
+            witness_index = self.pitch_list.index(self.present.written_pitch)
         pitch_indexes = [witness_index + x for x in pitch_list]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
         leaves = abjad.select(passaggio).leaves()
@@ -72,13 +75,11 @@ class Passaggio:
 
     def look_up_ornament(self):
         interval_dictionary = self.ornament_dictionary[self.interval.name[-1:]]
-        ornament_name, ornament = self.choose_ornament_from_dictionary(interval_dictionary)
-        ornament = self.invert_ornament(
-            ornament,
+        self.ornament_name, self.ornament = self.choose_ornament_from_dictionary(interval_dictionary)
+        self.ornament = self.invert_ornament(
+            self.ornament,
             self.interval.direction_number
             )
-        return ornament_name, ornament
-
     def create_ornament_leaves(self, ornament):
         passaggio = self.unpitched_leaves_from_ornament(ornament)
         self.pitch_leaves_with_ornament(passaggio, ornament)
@@ -90,9 +91,12 @@ class Passaggio:
         abjad.attach(markup, first_leaf)
 
     def passaggio_from_ornament(self, witnesses):
+        self.present = witnesses[0]
+        self.future = witnesses[1]
         if not self.ornament:
             self.get_interval_from_witnesses(witnesses)
-            self.ornament_name, self.ornament = self.look_up_ornament()
+            self.look_up_ornament()
         passaggio = self.create_ornament_leaves(self.ornament)
-        self.label_ornament(passaggio, self.ornament_name)
+        if True == self.debug:
+            self.label_ornament(passaggio, self.ornament_name)
         return passaggio

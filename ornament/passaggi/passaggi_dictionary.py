@@ -18,6 +18,7 @@ passaggi_dictionary = {
     '3': {
         'mezzo circulo': ([1] * 4, [0, -1, 0, 1]),
         'groppo': ([1] * 3, [0, 0, 1]),
+        'passing': ([1] * 2, [0, 1]),
         },
     '4': {
         'mezzo circulo': ([1] * 5, [0, -1, 0, 1, 2]),

@@ -14,6 +14,7 @@ class Suspension:
         ornament_name, ornament = self.look_up_ornament(suspension_dictionary)
         leaves = self.unpitched_leaves_from_ornament(ornament)
         leaves = self.pitch_leaves_with_ornament(leaves, ornament)
+        self.label_leaves(leaves, 'suspension')
         abjad.mutate(self.selections['top']).replace(leaves)
         self.label_leaves(self.selections['bottom'], 'no ornament')
 
