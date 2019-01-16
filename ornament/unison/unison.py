@@ -41,12 +41,13 @@ class Unison:
             leaf.written_pitch = self.pitch
 
     def build_fused_leaves(self, proportion):
-        leaves = abjad.Tuplet().from_duration_and_ratio(self.duration, proportion)
-        self.pitch_leaves(leaves)
-        leaves.trivialize()
-        if leaves.trivial():
-            leaves.hide = True
-        return leaves
+        inner_container = abjad.Tuplet().from_duration_and_ratio(self.duration, proportion)
+        self.pitch_leaves(inner_container)
+        inner_container.trivialize()
+        if inner_container.trivial():
+            outer_container = abjad.Container([inner_container])
+            abjad.mutate(inner_container).extract()
+        return outer_container
 
     def __repr__(self):
         return "Unison(Pitch:" + str(self.pitch) + ", " + \

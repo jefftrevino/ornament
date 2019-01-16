@@ -34,10 +34,12 @@ class Passaggio:
         tuplet = abjad.Tuplet().from_duration_and_ratio(duration, ratio)
         tuplet.trivialize()
         if tuplet.trivial():
-            tuplet.hide = True
-        return tuplet
+            container = abjad.Container([tuplet])
+            abjad.mutate(container[0]).extract()
+        return container
 
-    def pitch_leaves_with_ornament(self, passaggio, ornament):
+    def pitch_leaves_with_ornament(self, passaggio_container, ornament):
+        passaggio = passaggio_container[:]
         pitch_list = ornament[1]
         if isinstance(self.present, abjad.LogicalTie):
             witness_index = self.pitch_list.index(self.present[0].written_pitch)
@@ -82,9 +84,9 @@ class Passaggio:
             self.interval.direction_number
             )
     def create_ornament_leaves(self, ornament):
-        passaggio = self.unpitched_leaves_from_ornament(ornament)
-        self.pitch_leaves_with_ornament(passaggio, ornament)
-        return passaggio
+        passaggio_container = self.unpitched_leaves_from_ornament(ornament)
+        self.pitch_leaves_with_ornament(passaggio_container, ornament)
+        return passaggio_container
 
     def label_ornament(self, passaggio, ornament_name):
         markup = abjad.Markup(ornament_name, direction=abjad.Up)
