@@ -42,10 +42,10 @@ class Unison:
 
     def build_fused_leaves(self, proportion):
         leaves = abjad.Tuplet().from_duration_and_ratio(self.duration, proportion)
+        self.pitch_leaves(leaves)
         leaves.trivialize()
         if leaves.trivial():
             leaves.hide = True
-        self.pitch_leaves(leaves)
         return leaves
 
     def __repr__(self):

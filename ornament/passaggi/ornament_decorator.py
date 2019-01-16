@@ -7,6 +7,7 @@
 import abjad
 import random
 from ornament.passaggi.imitation_witness import ImitationWitness
+from ornament.unison.unison_decorator import UnisonDecorator
 from ornament.passaggi.passaggio import Passaggio
 from ornament.adjacency.adjacency import Adjacency
 
