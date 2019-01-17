@@ -35,7 +35,7 @@ class UnisonWitness:
         self.catalog_unison(unison)
 
     def is_base_duration(self, leaf):
-        return (2*self.resolution) == leaf.written_duration
+        return self.resolution == leaf.written_duration
 
     def should_add_to_run(self, note, run_pitch):
         return self.is_base_duration(note) and run_pitch == note.written_pitch
@@ -46,7 +46,7 @@ class UnisonWitness:
         grouped = groupby(notes, lambda x: x.written_duration)
         for group in grouped:
             run_list = list(group[1])
-            if 2 * self.resolution == group[0] and 1 < len(run_list):
+            if self.resolution == group[0] and 1 < len(run_list):
                 quarter_runs.append(run_list)
         return quarter_runs
 

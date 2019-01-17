@@ -77,7 +77,7 @@ class Passaggio:
         self.interval = interval
 
     def look_up_ornament(self):
-        interval_dictionary = self.ornament_dictionary[self.interval.name[-1:]]
+        interval_dictionary = self.ornament_dictionary[self.interval.name[-1]]
         self.ornament_name, self.ornament = self.choose_ornament_from_dictionary(interval_dictionary)
         self.ornament = self.invert_ornament(
             self.ornament,

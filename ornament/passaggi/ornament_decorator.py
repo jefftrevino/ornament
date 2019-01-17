@@ -7,13 +7,13 @@
 import abjad
 import random
 from ornament.passaggi.imitation_witness import ImitationWitness
-from ornament.unison.unison_decorator import UnisonDecorator
 from ornament.passaggi.passaggio import Passaggio
 from ornament.adjacency.adjacency import Adjacency
 
 class OrnamentDecorator:
     def __init__(self, scale, pitch_range, dict_dict):
         self.scale = scale
+        self.last_ornament_chosen = None
         self.pitch_range = pitch_range
         self.dict_dict = dict_dict
 
@@ -68,10 +68,6 @@ class OrnamentDecorator:
     def get_adjacency_pairs(self, moment_one, moment_two):
         pairs = []
         for staff_index in range(len(self.score)):
-            print(moment_one)
-            print(moment_two)
-            print(moment_one.start_notes)
-            print(moment_two.start_notes)
             pair = (moment_one.start_notes[staff_index], moment_two.start_notes[staff_index])
             pairs.append(pair)
         return pairs
@@ -95,10 +91,12 @@ class OrnamentDecorator:
         self.possible_imitations = imitation_witness(self.score, debug = self.debug)
 
     def decorate_imitations(self):
+        last_imitation_ornament = self.last_ornament_chosen
         passaggi_dict = self.dict_dict['passaggi']
         for imitation in self.possible_imitations:
             if imitation.adjacencies[0].from_note in imitation.pitch_list:
-                imitation(passaggi_dict)
+                last_imitation_ornament = imitation(passaggi_dict, last_ornament=last_imitation_ornament)
+        self.last_ornament_chosen = last_imitation_ornament
 
     def choose_adjacency(self, adjacencies):
         chosen = random.choice(adjacencies)
@@ -106,7 +104,34 @@ class OrnamentDecorator:
             chosen = random.choice(adjacencies)
         return chosen
 
+    def ornaments_are_equal(self, orn1, orn2):
+        if orn2 == None:
+            return False
+        elif orn1 == orn2 or orn1 == (orn2[0], [pitch * -1 for pitch in orn2[1]]):
+            return True
+        else:
+            return False
+
+    def engrave_passaggio(self, passaggio, witnesses, adjacency):
+        staff_index = adjacency.staff_index
+        passaggio.look_up_ornament()
+        while self.ornaments_are_equal(passaggio.ornament, self.last_passaggi_ornaments[staff_index]):
+            passaggio.look_up_ornament()
+        self.last_passaggi_ornaments[staff_index] = passaggio.ornament
+        leaves = passaggio(witnesses)
+        abjad.mutate(adjacency.from_note).replace(leaves)
+
+    def add_passaggio_to_adjacency(self, adjacency):
+        if adjacency.from_note.written_pitch == abjad.NamedPitch("fs'"):
+        ornament_dict = self.dict_dict['passaggi']
+        witnesses = (adjacency.from_note, adjacency.to_note)
+        passaggio = Passaggio(ornament_dict, self.scale, self.pitch_range)
+        passaggio.get_interval_from_witnesses(witnesses)
+        self.engrave_passaggio(passaggio, witnesses, adjacency)
+
     def add_passaggi(self):
+        self.last_passaggi_ornaments = [self.last_ornament_chosen] * 3
+        self.last_voice = None # to implement: ornament a different voice each time
         moments = list(abjad.iterate(self.score).vertical_moments())
         for moment_pair in zip(moments, moments[1:]):
             first_starts = moment_pair[0].start_notes
@@ -115,9 +140,6 @@ class OrnamentDecorator:
                 if self.moment_contains_only_base_values(moment_pair[0]):
                     adjacencies = [Adjacency(moment_pair[0], moment_pair[1], i) for i in range(3)]
                     if False in ['P1' == a.melodic_interval.name for a in adjacencies]:
-                        chosen = self.choose_adjacency(adjacencies)
-                        witnesses = (chosen.from_note, chosen.to_note)
-                        dict = self.dict_dict['passaggi']
-                        passaggio = Passaggio(dict, self.scale, self.pitch_range)
-                        leaves = passaggio(witnesses)
-                        abjad.mutate(chosen.from_note).replace(leaves)
+                        adjacency = self.choose_adjacency(adjacencies)
+                        self.add_passaggio_to_adjacency(adjacency)
+        self.last_ornament_chosen = self.last_passaggi_ornaments[0]

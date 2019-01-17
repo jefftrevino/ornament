@@ -5,6 +5,7 @@ class Adjacency:
         # staff_index specifies which index in
         self.present_moment = present_moment
         self.future_moment = future_moment
+        self.staff_index = staff_index
         self.from_note = self.present_moment.start_leaves[staff_index]
         self.to_note = self.future_moment.start_leaves[staff_index]
         self.melodic_interval = self.calculate_and_octave_reduce_interval(

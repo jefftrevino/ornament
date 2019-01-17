@@ -113,7 +113,7 @@ bottom = abjad.Staff("\
     c e c e\
     c e c e\
     b, g, b, g,\
-    b, g, b, g\
+    b, g, b, g,\
     fs, d d fs\
     d fs d fs\
     fs, d d fs\

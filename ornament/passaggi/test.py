@@ -52,4 +52,4 @@ first_bass_leaf = abjad.inspect(skeleton[2]).leaf(0)
 abjad.attach(abjad.Clef('bass'), first_bass_leaf)
 
 abjad.show(skeleton)
-abjad.play(skeleton)
+# abjad.play(skeleton)
