@@ -38,7 +38,8 @@ class Unison:
 
     def pitch_leaves(self, leaves):
         for leaf in leaves:
-            leaf.written_pitch = self.pitch
+            if isinstance(leaf, abjad.Note):
+                leaf.written_pitch = self.pitch
 
     def build_fused_leaves(self, proportion):
         inner_container = abjad.Tuplet().from_duration_and_ratio(self.duration, proportion)
