@@ -122,7 +122,6 @@ class OrnamentDecorator:
         abjad.mutate(adjacency.from_note).replace(leaves)
 
     def add_passaggio_to_adjacency(self, adjacency):
-        if adjacency.from_note.written_pitch == abjad.NamedPitch("fs'"):
         ornament_dict = self.dict_dict['passaggi']
         witnesses = (adjacency.from_note, adjacency.to_note)
         passaggio = Passaggio(ornament_dict, self.scale, self.pitch_range)
