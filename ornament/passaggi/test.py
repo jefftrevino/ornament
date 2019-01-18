@@ -47,9 +47,23 @@ unison_decorator = UnisonDecorator(unison_dictionary)
 unison_decorator(skeleton)
 
 fix_meter_at_measure_boundaries(skeleton, abjad.Duration(1,2))
-# add_clef_changes(skeleton[1])
-first_bass_leaf = abjad.inspect(skeleton[2]).leaf(0)
-abjad.attach(abjad.Clef('bass'), first_bass_leaf)
+# add_clef_changes(skeleton[2])
+# first_bass_leaf = abjad.inspect(skeleton[2]).leaf(0)
+# abjad.attach(abjad.Clef('bass'), first_bass_leaf)
 
-abjad.show(skeleton)
-abjad.play(skeleton)
+def rosatize(score):
+    # transposing up an octave for Rosa Guitar Trio
+    for staff in score:
+        first_leaf = abjad.inspect(staff).leaf(0)
+        abjad.attach(abjad.Dynamic('pp'), first_leaf)
+        for note in abjad.iterate(staff).components(prototype=abjad.Note):
+            note.written_pitch += 12
+
+rosatize(score)
+lilypond_file = abjad.LilyPondFile.new(music=skeleton)
+
+lilypond_file.header_block.title = abjad.Markup(r'Past Machine 1')
+lilypond_file.header_block.composer = abjad.Markup('J. R. Trevino, 2019')
+
+abjad.show(lilypond_file)
+abjad.play(lilypond_file)

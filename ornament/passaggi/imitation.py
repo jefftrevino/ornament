@@ -53,6 +53,6 @@ class Imitation:
             from_note = adjacency.from_note
             to_note = adjacency.to_note
             if self.adjacencies[0].from_note.written_pitch in passaggio.pitch_list:
-                leaves = passaggio((from_note, to_note), debug=True)
+                leaves = passaggio((from_note, to_note), debug=False)
                 self.label_leaves(leaves, 'imitation')
                 abjad.mutate(from_note).replace(leaves)
