@@ -6,7 +6,7 @@ passaggi_dictionary = {
 # multiple by -1 to invert ornament
     '1': {
         'bombus': ([1] * 4, [0,0,0,0]),
-        'circolo mezzo': ([1] * 4, [0, -1, -2, -1]),
+        'circolo mezzo': ([1] * 4, [0, 1, 2, 1]),
         'tallis suspirans': ([-2, 3, 1, 1, 1], [0,0,-1, -2, -1]),
         },
 
@@ -19,6 +19,7 @@ passaggi_dictionary = {
         'circolo mezzo': ([1] * 4, [0, -1, 0, 1]),
         'groppo': ([1] * 4, [0, -1, 0, 1]),
         'passing': ([1] * 2, [0, 1]),
+        'passing 2': ([2, 1, 1], [0, 0, 1]),
         },
     '4': {
         'circolo mezzo': ([2, 1, 1], [0, 1, 2]),

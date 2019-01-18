@@ -38,16 +38,25 @@ class Passaggio:
             abjad.mutate(container[0]).extract()
         return container
 
-    def pitch_leaves_with_ornament(self, passaggio_container, ornament):
-        passaggio = passaggio_container[:]
-        pitch_list = ornament[1]
+    def all_pitches_in_range(self, pitches):
+        for pitch in pitches:
+            if pitch not in self.pitch_range:
+                return False
+        return True
+    
+    def get_pitches_from_relative_pitch_list(self, relative_pitch_list):
         if isinstance(self.present, abjad.LogicalTie):
-            witness_index = self.pitch_list.index(self.present[0].written_pitch)
+            witness_index = relative_pitch_list.index(self.present[0].written_pitch)
         elif isinstance(self.present, abjad.Note):
             witness_index = self.pitch_list.index(self.present.written_pitch)
-        pitch_indexes = [witness_index + x for x in pitch_list]
+        pitch_indexes = [witness_index + x for x in relative_pitch_list]
         pitches = [self.pitch_list[x] for x in pitch_indexes]
-        leaves = abjad.select(passaggio).leaves()
+        return pitches
+    
+    def pitch_leaves_with_ornament(self, passaggio_container, ornament):
+        relative_pitch_list = ornament[1]
+        pitches = self.get_pitches_from_relative_pitch_list(relative_pitch_list)
+        leaves = abjad.select(passaggio_container).leaves()
         for leaf, pitch in zip(leaves, pitches):
             if not isinstance(leaf, abjad.Rest):
                 leaf.written_pitch = pitch

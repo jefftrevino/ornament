@@ -25,6 +25,7 @@ class Unison:
                 self.choose_proportion(unison_dictionary)
             leaves = self.build_fused_leaves(self.proportion)
             abjad.mutate(self.selection).replace(leaves)
+            self.label_leaves(leaves, 'unison')
 
     def choose_proportion(self, unison_dictionary):
         proportions_list = unison_dictionary[self.duration]
@@ -40,6 +41,11 @@ class Unison:
         for leaf in leaves:
             if isinstance(leaf, abjad.Note):
                 leaf.written_pitch = self.pitch
+
+    def label_leaves(self, leaves, label):
+        for leaf in leaves:
+            label = abjad.LilyPondComment(label)
+            abjad.attach(label, leaf)
 
     def build_fused_leaves(self, proportion):
         inner_container = abjad.Tuplet().from_duration_and_ratio(self.duration, proportion)

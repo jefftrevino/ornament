@@ -43,96 +43,39 @@ import abjad
 # ")
 skeleton = abjad.Score()
 top = abjad.Staff("\
-    b'4 b' b' e' \
-    g' e' g' e'\
-    b' b' b' e' \
-    g' e' g' e'\
-    d' d' c' a c' a c' d' \
-    e' c' e' c'\
-    e' c' e' c'\
-    d' d' d' d'\
-    d' d' d' d'\
-    d' a fs' d'\
-    fs' d' fs' d'\
-    d' a fs' d'\
-    fs' d' fs' d'\
-    c' a' e' c'\
-    a c' a c'\
-    b e' g' e'\
-    e' e' e' e'\
-    b e' g' e'\
-    e' e' e' e'\
-    e' e' c' g'\
-    c'' g' g' e'\
-    e' e' c' g'\
-    c'' g' g' e'\
-    d' g' g' g'\
-    d' g' g' b'\
-    d' g' g' g'\
-    d' g' g' b'\
-    a'1")
+    e'' e'' e'' a' c'' a' c'' a' e'' e'' e'' a' c'' a' c'' a'\
+    g' g' f' d' f' d' f' g'\
+    a' f' a' f' a' f' a' f' g' g' g' g' g' g' g' g' \
+    g' d' b' g' b' g' b' g' g' d' b' g' b' g' b' g' \
+    f' d'' a' f' d' f' d' f' \
+    e' a' c'' a' a' a' a' a' e' a' c'' a' a' a' a' a'\
+    a' a' f' c'' f'' c'' c'' a' a' a' f' c'' f'' c'' c'' a'\
+    g' c'' c'' c'' g' c'' c'' e''\
+    d''1")
+
+
 
 middle = abjad.Staff("\
-    g e g b\
-    b b b b \
-    g e g b\
-    b b b b \
-    fs a e e\
-    e e e g\
-    g g g g \
-    g g g g \
-    g b g b\
-    g b g b\
-    a fs a a\
-    a a a a\
-    a fs a a\
-    a a a a\
-    e e c e\
-    e e e a\
-    g b b b\
-    g b g b\
-    g b b b\
-    g b g b\
-    c' g g c'\
-    e' e' c' c'\
-    c' g g c'\
-    e' e' c' c'\
-    b b d' b\
-    b b d' d'\
-    b b d' b\
-    b b d' d'\
-    d1")
+    c' a c' e' e' e' e' e' c' a c' e' e' e' e' e'\
+    b d' a a a a a c' \
+    c' c' c' c' c' c' c' c' c' e' c' e' c' e' c' e'\
+    d' b d' d' d' d' d' d' d' b d' d' d' d' d' d'\
+    a a f a a a a d'\
+    c' e' e' e' c' e' c' e' c' e' e' e' c' e' c' e'\
+    f' c' c' f' a' a' f' f' f' c' c' f' a' a' f' f'\
+    e' e' g' e' e' e' g' g'\
+    g'1")
 
 bottom = abjad.Staff("\
-    e, g, e, g,\
-    e, g, e, g,\
-    e, g, e, g,\
-    e, g, e, g,\
-    b, fs, a, c\
-    a, c a, b,\
-    c e c e\
-    c e c e\
-    b, g, b, g,\
-    b, g, b, g,\
-    fs, d d fs\
-    d fs d fs\
-    fs, d d fs\
-    d fs d fs\
-    a, c a, a,\
-    c a, c e\
-    e g, e, g,\
-    b, g, b, g,\
-    e g, e, g,\
-    b, g, b, g,\
-    g, c e e\
-    g c' e g\
-    g, c e e\
-    g c' e g\
-    g d b, d\
-    g d b, g,\
-    g d b, d\
-    g d b, g,\
-    fs,1")
+    a, c a, c a, c a, c a, c a, c a, c a, c\
+    e b, d f d f d e\
+    f a f a f a f a e c e c e c e c\
+    b, g g b g b g b b, g g b g b g b\
+    d f d d f d f a\
+    a c a, c e c e c a c a, c e c e c\
+    c f a a c' f' a c' c f a a c' f' a c'\
+    c' g e g c' g' e c \
+    b,1")
 
 skeleton.extend([top, middle, bottom])
 

@@ -128,9 +128,27 @@ class OrnamentDecorator:
         passaggio.get_interval_from_witnesses(witnesses)
         self.engrave_passaggio(passaggio, witnesses, adjacency)
 
+    def ensure_novel_staff_choice(self, adjacencies, adjacency):
+        if not self.last_passaggi_voice:
+            return adjacency
+        elif self.last_passaggi_voice == adjacency.staff_index:
+            while self.last_passaggi_voice == adjacency.staff_index:
+                adjacency = self.choose_adjacency(adjacencies)
+        return adjacency
+
+
+    def succeeds_imitation(self, leaf):
+        previous_leaf = abjad.inspect(leaf).leaf(-1)
+        if previous_leaf:
+            indicators = abjad.inspect(previous_leaf).indicators()
+            for i in indicators:
+                if 'imitation' == i.string:
+                    return True
+        return False
+
     def add_passaggi(self):
         self.last_passaggi_ornaments = [self.last_ornament_chosen] * 3
-        self.last_voice = None # to implement: ornament a different voice each time
+        self.last_passaggi_voice = None # to implement: ornament a different voice each time
         moments = list(abjad.iterate(self.score).vertical_moments())
         for moment_pair in zip(moments, moments[1:]):
             first_starts = moment_pair[0].start_notes
@@ -139,6 +157,12 @@ class OrnamentDecorator:
                 if self.moment_contains_only_base_values(moment_pair[0]):
                     adjacencies = [Adjacency(moment_pair[0], moment_pair[1], i) for i in range(3)]
                     if False in ['P1' == a.melodic_interval.name for a in adjacencies]:
+                        adjacencies = [a for a in adjacencies if a.melodic_interval.name != 'P1']
+                        adjacencies = [a for a in adjacencies \
+                        if not self.succeeds_imitation(a.from_note)]
                         adjacency = self.choose_adjacency(adjacencies)
+                        if 2 <= len(adjacencies):
+                            adjacency = self.ensure_novel_staff_choice(adjacencies, adjacency)
+                        self.last_passaggi_voice = adjacency.staff_index
                         self.add_passaggio_to_adjacency(adjacency)
         self.last_ornament_chosen = self.last_passaggi_ornaments[0]

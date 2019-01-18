@@ -21,12 +21,14 @@ from ornament.unison.unison_dictionary import unison_dictionary
 skeleton = preprocessed_skeleton
 
 random.seed(3)
-scale = tonality.Scale(('g', 'major'))
+scale = tonality.Scale(('a', 'minor'))
 pitch_range = abjad.pitch.PitchRange('[E2, B5]')
 
-def fix_meter_at_measure_boundaries(score, chop_duration):
+def fix_meter(score, chop_duration):
     for staff in score:
-        abjad.mutate(staff[:]).split(durations=[chop_duration], cyclic=True)
+        for staff in score:
+            abjad.mutate(staff[:]).split(durations=[chop_duration], cyclic=True)
+
 
 def add_clef_changes(staff):
     effective = abjad.Clef('treble')
@@ -46,7 +48,7 @@ ornament_decorator(skeleton, debug=False)
 unison_decorator = UnisonDecorator(unison_dictionary)
 unison_decorator(skeleton)
 
-fix_meter_at_measure_boundaries(skeleton, abjad.Duration(4,4))
+fix_meter(skeleton, abjad.Duration(1,2))
 add_clef_changes(skeleton[1])
 first_bass_leaf = abjad.inspect(skeleton[2]).leaf(0)
 abjad.attach(abjad.Clef('bass'), first_bass_leaf)

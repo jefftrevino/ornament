@@ -32,6 +32,11 @@ class Imitation:
         elif orn1 == orn2 or orn1 == (orn2[0], [pitch * -1 for pitch in orn2[1]]):
             return True
 
+    def label_leaves(self, leaves, label):
+        for leaf in leaves:
+            label = abjad.LilyPondComment(label)
+            abjad.attach(label, leaf)
+
     def set_up_passaggio(self):
         passaggio = Passaggio(self.dictionary, self.scale, self.pitch_range)
         first_a = self.adjacencies[0]
@@ -49,4 +54,5 @@ class Imitation:
             to_note = adjacency.to_note
             if self.adjacencies[0].from_note.written_pitch in passaggio.pitch_list:
                 leaves = passaggio((from_note, to_note), debug=True)
+                self.label_leaves(leaves, 'imitation')
                 abjad.mutate(from_note).replace(leaves)
