@@ -18,7 +18,7 @@ from ornament.passaggi.passaggi_dictionary import passaggi_dictionary
 from ornament.unison.unison_dictionary import unison_dictionary
 
 
-skeleton = preprocessed_skeleton
+skeleton = preprocessed_skeletons[0] # choose a skeleton
 
 random.seed(5)
 scale = tonality.Scale(('a', 'minor'))
