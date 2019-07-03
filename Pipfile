@@ -14,6 +14,7 @@ seaborn = "*"
 scipy = "*"
 abjad-ext-ipython = "*"
 abjad-ext-tonality = "*"
+ornament = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
