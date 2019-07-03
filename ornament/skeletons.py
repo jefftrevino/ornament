@@ -41,7 +41,9 @@ import abjad
 # f f d d f f d d \
 # a a a a g g e e a, a, a a \
 # ")
-skeleton = abjad.Score()
+
+skeletons = []
+skeleton_one = abjad.Score()
 top = abjad.Staff("\
     e'' e'' e'' a' c'' a' c'' a' e'' e'' e'' a' c'' a' c'' a'\
     g' g' f' d' f' d' f' g'\
@@ -79,7 +81,9 @@ bottom = abjad.Staff("\
 
 skeleton.extend([top, middle, bottom])
 
+skeletons.append(skeleton)
 
 if __name__ == '__main__':
-    abjad.show(skeleton)
-    abjad.play(skeleton)
+    for s in skeletons:
+        abjad.show(s)
+        abjad.play(s)
