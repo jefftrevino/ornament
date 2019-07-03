@@ -9,7 +9,7 @@ import random
 import abjad
 
 from abjadext import tonality
-from ornament.preprocess_skeleton import preprocessed_skeleton
+from ornament.preprocess_skeleton import preprocessed_skeletons
 from ornament.suspension.suspension_decorator import SuspensionDecorator
 from ornament.passaggi.ornament_decorator import OrnamentDecorator
 from ornament.unison.unison_decorator import UnisonDecorator
@@ -59,11 +59,10 @@ def rosatize(score):
         for note in abjad.iterate(staff).components(prototype=abjad.Note):
             note.written_pitch += 12
 
-rosatize(score)
+rosatize(skeleton)
 lilypond_file = abjad.LilyPondFile.new(music=skeleton)
 
 lilypond_file.header_block.title = abjad.Markup(r'Past Machine 1')
 lilypond_file.header_block.composer = abjad.Markup('J. R. Trevino, 2019')
 
 abjad.show(lilypond_file)
-abjad.play(lilypond_file)

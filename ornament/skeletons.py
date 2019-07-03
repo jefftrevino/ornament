@@ -79,9 +79,9 @@ bottom = abjad.Staff("\
     c' g e g c' g' e c \
     b,1")
 
-skeleton.extend([top, middle, bottom])
+skeleton_one.extend([top, middle, bottom])
 
-skeletons.append(skeleton)
+skeletons.append(skeleton_one)
 
 if __name__ == '__main__':
     for s in skeletons:
