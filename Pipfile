@@ -13,6 +13,7 @@ matplotlib = "*"
 seaborn = "*"
 scipy = "*"
 abjad-ext-ipython = "*"
+abjad-ext-tonality = "*"
 
 [requires]
 python_version = "3.7"

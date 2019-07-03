@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fbd59ce9a437b00918888fb1c6245f3a04affa8a4ce24792cd67d11d97ba5e84"
+            "sha256": "4edeacac16abe949c34607fe460bc1959bc54259363c395689d358101d6df636"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,6 +26,13 @@
         "abjad-ext-ipython": {
             "hashes": [
                 "sha256:15cfac60bb56e5a356e480fb82c0e8b6d63165e707b70d0e61135f18f88f426f"
+            ],
+            "index": "pypi",
+            "version": "==3.0.0"
+        },
+        "abjad-ext-tonality": {
+            "hashes": [
+                "sha256:299973dd5b07cccd53c387a94ea90a3cfcbac4e0bec9c19921dac66cb38b6bff"
             ],
             "index": "pypi",
             "version": "==3.0.0"
