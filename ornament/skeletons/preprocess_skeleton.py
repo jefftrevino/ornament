@@ -1,9 +1,9 @@
-from ornament.skeletons import skeletons
+from ornament.skeletons.skeletons import skeletons
 import abjad
 
 def preprocess_skeletons(skeletons):
     '''
-
+    Turn one quarter note into two for every quarter in the skeletons.
     '''
     preprocessed_skeletons = []
     for s in skeletons:

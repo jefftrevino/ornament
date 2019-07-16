@@ -1,48 +1,7 @@
 import abjad
 
-# skeleton_old = abjad.Score()
-# top = abjad.Staff(
-#     "d''4 d'' a' a' c'' c'' b' b' \
-#      c'' c'' a' a' c'' c'' d'' d'' \
-#      e'' e'' c'' c'' c'' c'' e'' e'' \
-#      e'' e'' c'' c'' c'' c'' g' g' \
-#      c'' c'' a' a' c'' c'' a' a' \
-#      g' g' e' e' c' c' e' e' \
-#      d' d' d' d' d' d' d' d' \
-#      d' d' f' f' a' a' f' f' \
-#      a' a' f' f' a' a' f' f' \
-#      e' e' c'' c'' b' b' b' b' cs'' cs'' cs'' cs''\
-# ")
-# abjad.attach(abjad.TimeSignature((4,4)), top[0])
-#
-# middle = abjad.Staff(" \
-#     f'4 f' f' f' e' e' d' d' \
-#     e' e' e' e' e' e' g' g'\
-#     g' g' g' g' g' g' g' g'\
-#     g' g' g' g' e' e' e' e'\
-#     f' f' f' f' f' f' f' f'\
-#     e' e' \clef bass g g g g g g \
-#     g g g g b b b b \
-#     a a a a d d a a \
-#     d d a a d d a a \
-#     \clef treble c' c' e' e' e' e' g' g' e' e' e' e' \
-#     \
-# ")
-#
-# bottom = abjad.Staff(" \
-# \clef bass a4 a d' d' g g g g \
-# a a c' c' a a b b \
-# c' c' e' e' e e c c \
-# c c e e g g c' c' \
-# a a c' c' a a c' c' \
-# c' c' c c e e c c \
-# b, b, b, b, g, g, g g  \
-# f f d d f f d d \
-# f f d d f f d d \
-# a a a a g g e e a, a, a a \
-# ")
-
 skeletons = []
+
 skeleton_one = abjad.Score()
 top = abjad.Staff("\
     e'' e'' e'' a' c'' a' c'' a' e'' e'' e'' a' c'' a' c'' a'\
@@ -54,8 +13,6 @@ top = abjad.Staff("\
     a' a' f' c'' f'' c'' c'' a' a' a' f' c'' f'' c'' c'' a'\
     g' c'' c'' c'' g' c'' c'' e''\
     d''1")
-
-
 
 middle = abjad.Staff("\
     c' a c' e' e' e' e' e' c' a c' e' e' e' e' e'\
@@ -80,10 +37,106 @@ bottom = abjad.Staff("\
     b,1")
 
 skeleton_one.extend([top, middle, bottom])
-
 skeletons.append(skeleton_one)
+
+skeleton_two = abjad.Score()
+
+top = abjad.Staff("\
+e' e' d' d' \
+e' e' f' f' \
+e' e' d' d' \
+g' g' e' e' \
+a' a' d' f' \
+e' e' g' g' \
+d' d' d' d' \
+e' e' f' f' \
+g' g' e' e' \
+d' d' d' d' \
+e' e' d' d' \
+e' e' f' f' \
+e' e' d' d' \
+g' g' e' e' \
+a' a' d' f' \
+e' e' g' g' \
+d' d' d' d' \
+e' e' f' f' \
+g' g' e' e' \
+d' d' d' d' \
+e' c' f' d' \
+b e' e' d' \
+e' c' f' d' \
+b e' e' d' \
+g' g' f' f' \
+e' e' a' a' \
+d' a' d'' a' \
+b' b' b' b' \
+c''")
+
+middle = abjad.Staff("\
+g g g g \
+g g c' c' \
+g g g g \
+c' c' c' c' \
+d' d' b b \
+c' c' c' c' \
+a a g g \
+g g c' c' \
+c' c' c' c' \
+a a b b \
+g g g g \
+g g c' c' \
+g g g g \
+c' c' c' c' \
+d' d' b b \
+c' c' c' c' \
+a a g g \
+g g c' c' \
+c' c' c' c' \
+a a b b \
+g g a a \
+a b c' g \
+g g a a \
+a b c' g \
+e' c' c' c' \
+c' c' c' c' \
+a d' a' d' \
+g' g' e' e' e'")
+
+bottom = abjad.Staff("\
+c c b, b, \
+c c a, a, \
+c c b, b, \
+e, e a a \
+f f g g \
+a a e e \
+f f b, b, \
+c c a, a, \
+e, e a a \
+f f g g \
+c c b, b, \
+c c a, a, \
+c c b, b, \
+e, e a a \
+f f g g \
+a a e e \
+f f b, b, \
+c c a, a, \
+e, e a a \
+f f g g \
+c e d f \
+g g, a, b, \
+c e d f \
+g g, a, b, \
+c e a a \
+a a f f \
+f f f f \
+e e g g \
+a")
+
+skeleton_two.extend([top, middle, bottom])
+skeletons.append(skeleton_two)
 
 if __name__ == '__main__':
     for s in skeletons:
+        abjad.attach(abjad.Clef('bass'), s[2][0])
         abjad.show(s)
-        abjad.play(s)
