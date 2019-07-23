@@ -18,7 +18,7 @@ from ornament.suspension.suspension_dictionary import suspension_dictionary
 from ornament.passaggi.passaggi_dictionary import passaggi_dictionary
 from ornament.unison.unison_dictionary import unison_dictionary
 
-random.seed(4) # 2, 3,  is not bad
+random.seed(3) # 2, 3,  is not bad
 
 skeleton = preprocessed_skeletons[1] # choose a skeleton
 scale = tonality.Scale(('a', 'minor'))
