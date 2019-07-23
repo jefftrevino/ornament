@@ -26,7 +26,7 @@ passaggi_dictionary = {
     '4': {
         'circolo mezzo': ([2, 1, 1], [0, 1, 2]),
         'circolo mezzo 2': ([6, 1, 1], [0, 1, 2]),
-        'circolo mezzo 3': ([-1, 1, 1, 1], [0, 1, 2]),
+        'circolo mezzo 3': ([-1, 1, 1, 1], [0, 0, 1, 2]),
         'tirata suspirans': ([-1, 1, 1, 1, 1, 1, 1, 1], [0, 2, 1, 0, 1, 0, 1, 2]),
         },
     '5': {
