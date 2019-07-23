@@ -26,7 +26,7 @@ pitch_range = abjad.pitch.PitchRange('[E2, B5]')
 dict_tuple = (suspension_dictionary, passaggi_dictionary, unison_dictionary)
 
 maker = SegmentMaker(scale, pitch_range)
-maker(skeleton, dict_tuple) # calling the maker instance configures and decorates
+maker(skeleton, dict_tuple, n_attacks=3) # calling the maker instance configures and decorates
 
 lilypond_file = abjad.LilyPondFile.new(music=maker.skeleton)
 

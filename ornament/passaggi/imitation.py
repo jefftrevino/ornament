@@ -13,6 +13,7 @@ class Imitation:
         self.pitch_range = pitch_range
         self.pitch_list = self.sorted_pitch_list_from_scale_and_pitch_range()
         self.adjacencies = adjacencies
+        self.last_ornament = None
 
     def __call__(self, passaggi_dictionary, last_ornament=None):
         self.last_ornament = last_ornament
@@ -21,6 +22,11 @@ class Imitation:
         passaggio = self.set_up_passaggio()
         self.mutate_leaves(passaggio)
         return self.last_ornament
+
+    def __repr__(self):
+        return "Imitation(adjacencies:" + str(self.adjacencies) + ", " + \
+        "last ornament:" + str(self.last_ornament) + ", " + \
+         ")"
 
     def sorted_pitch_list_from_scale_and_pitch_range(self):
         named_pitch_set = self.scale.create_named_pitch_set_in_pitch_range(self.pitch_range)
@@ -43,7 +49,6 @@ class Imitation:
         passaggio.get_interval_from_witnesses((first_a.from_note, first_a.to_note))
         passaggio.look_up_ornament()
         while self.ornaments_are_equal(passaggio.ornament, self.last_ornament):
-            "they were equal"
             passaggio.look_up_ornament()
         self.last_ornament = passaggio.ornament
         return passaggio

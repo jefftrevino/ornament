@@ -22,9 +22,13 @@ class OrnamentDecorator:
         self.resolution = abjad.Duration(first_leaf.written_duration)
         self.score = score
         self.debug = debug
+        print('decorator: initialized, fusing moments...')
         self.fuse_moments()
+        print('decorator: fused moments, adding imitations...')
         self.add_imitations()
+        print('decorator: added imitations, adding passaggi...')
         self.add_passaggi()
+        print('decorator: added passaggi - finished.')
 
     def is_suspension_indicator(self, indicator):
         if 'suspension' == indicator.string:
@@ -93,7 +97,9 @@ class OrnamentDecorator:
     def decorate_imitations(self):
         last_imitation_ornament = self.last_ornament_chosen
         passaggi_dict = self.dict_dict['passaggi']
+        print('passaggi dict is:', passaggi_dict)
         for imitation in self.possible_imitations:
+            print(imitation)
             if imitation.adjacencies[0].from_note in imitation.pitch_list:
                 last_imitation_ornament = imitation(passaggi_dict, last_ornament=last_imitation_ornament)
         self.last_ornament_chosen = last_imitation_ornament
@@ -117,6 +123,9 @@ class OrnamentDecorator:
         passaggio.look_up_ornament()
         while self.ornaments_are_equal(passaggio.ornament, self.last_passaggi_ornaments[staff_index]):
             passaggio.look_up_ornament()
+            'stuck here?'
+            print(passaggio.ornament)
+            print(self.last_passaggi_ornaments[staff_index])
         self.last_passaggi_ornaments[staff_index] = passaggio.ornament
         leaves = passaggio(witnesses)
         abjad.mutate(adjacency.from_note).replace(leaves)
@@ -133,6 +142,7 @@ class OrnamentDecorator:
             return adjacency
         elif self.last_passaggi_voice == adjacency.staff_index:
             while self.last_passaggi_voice == adjacency.staff_index:
+                print('looping the loop')
                 adjacency = self.choose_adjacency(adjacencies)
         return adjacency
 
